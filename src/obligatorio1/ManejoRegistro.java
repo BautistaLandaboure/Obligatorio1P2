@@ -22,7 +22,7 @@ public class ManejoRegistro {
         RegistroUsuarios usuario = iterator.next(); 
         
         if (usuario.getAlias().equals(alias)) {
-            return true; //
+            return true; 
         }
     }
     return false; 
