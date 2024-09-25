@@ -17,10 +17,7 @@ public class RegistroUsuarios {
         
         this.alias = alias;
     }
-
-    // Obtener el alias del usuario
    
-
     // Método para mostrar la información del usuario
     @Override
     public String toString() {
