@@ -50,7 +50,7 @@ public class TableroTateti {
 }
    
  public boolean jugarEnCuadrante(int cuadranteIndex, String posicion, String simbolo) {
-    // Convierte la posición (A1, A2, etc.) a coordenadas en el arreglo
+    // Convierte la posición (A1, A2, etc.) a coordenadas en el array
     int fila, columna;
     switch (posicion) {
         case "A1":
