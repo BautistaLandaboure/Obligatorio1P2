@@ -97,35 +97,106 @@ public class Obligatorio1 {
     }
 
     private static void iniciarJuegoEntreDosPersonas() {
-        Scanner in = new Scanner(System.in);
+    Scanner in = new Scanner(System.in);
 
-        if (manejoRegistro.getUsuarios().size() < 2) {
-            System.out.println("Se necesitan al menos dos jugadores registrados para jugar.");
-            return;
-        }
+    if (manejoRegistro.getUsuarios().size() < 2) {
+        System.out.println("Se necesitan al menos dos jugadores registrados para jugar.");
+        return;
+    }
 
-        System.out.println("Jugadores disponibles:");
-        ArrayList<RegistroUsuarios> usuarios = manejoRegistro.getUsuarios();
-        for (int i = 0; i < usuarios.size(); i++) {
-            System.out.println((i + 1) + ". " + usuarios.get(i).getAlias());
-        }
+    System.out.println("Jugadores disponibles:");
+    ArrayList<RegistroUsuarios> usuarios = manejoRegistro.getUsuarios();
+    for (int i = 0; i < usuarios.size(); i++) {
+        System.out.println((i + 1) + ". " + usuarios.get(i).getAlias());
+    }
 
-        System.out.print("Seleccione el jugador 1 (número): ");
-        int jugador1Index = in.nextInt() - 1;
-        System.out.print("Seleccione el jugador 2 (número): ");
-        int jugador2Index = in.nextInt() - 1;
+    System.out.print("Seleccione el jugador 1 (número): ");
+    int jugador1Index = in.nextInt() - 1;
+    System.out.print("Seleccione el jugador 2 (número): ");
+    int jugador2Index = in.nextInt() - 1;
 
-        RegistroUsuarios jugador1 = usuarios.get(jugador1Index);
-        RegistroUsuarios jugador2 = usuarios.get(jugador2Index);
+    RegistroUsuarios jugador1 = usuarios.get(jugador1Index);
+    RegistroUsuarios jugador2 = usuarios.get(jugador2Index);
 
-        System.out.println("¡Comienza el juego entre " + jugador1.getAlias() + " y " + jugador2.getAlias() + "!");
+    System.out.println("¡Comienza el juego entre " + jugador1.getAlias() + " y " + jugador2.getAlias() + "!");
 
-        tableroTateti.mostrarTablero();
+    tableroTateti.mostrarTablero();
 
-        boolean partidaActiva = true;
+    boolean partidaActiva = true;
+    
+    String jugadorActual = "X";  // Empieza el jugador 1
+    
+    RegistroUsuarios jugadorActualRegistro = jugador1; // El jugador 1 inicia
+
+    while (partidaActiva) {
+        System.out.println(jugadorActualRegistro.getAlias() + ", elige un cuadrante ");
         
-        while (partidaActiva) {
-            partidaActiva = false; // para que salga rapido mientras no exista la logica para el el juego, a eliminar
+        String cuadranteElegido = in.nextLine().toUpperCase();
+        
+        int cuadranteIndex = obtenerCuadranteIndex(cuadranteElegido);
+
+        if (cuadranteIndex == -1) {
+            System.out.println("Cuadrante inválido, por favor inténtalo de nuevo.");
+            continue;
+        }
+
+        System.out.println("Elige una posición en el cuadrante " + cuadranteElegido );
+        
+        String posicionElegida = in.nextLine().toUpperCase();
+
+        // Actualiza el tablero en la posición elegida
+        boolean posicionValida = tableroTateti.jugarEnCuadrante(cuadranteIndex, posicionElegida, jugadorActual);
+        
+        if (posicionValida) {
+            
+            tableroTateti.mostrarTablero();
+            
+            // Cambia de jugador   
+            if (jugadorActual.equals("X")) {
+                
+                jugadorActual = "O";
+                
+                jugadorActualRegistro = jugador2;
+                
+            } else {
+                jugadorActual = "X";
+                
+                jugadorActualRegistro = jugador1;
+            }
+        } else {
+            System.out.println("Posición no válida o ya ocupada. Inténtalo de nuevo.");
+        }
+    }
+}
+private static int obtenerCuadranteIndex(String cuadrante) {
+    switch (cuadrante) {
+        case "A1":
+            return 0;
+        case "A2":
+            return 1;
+        case "A3":
+            return 2;
+        case "B1":
+            return 3;
+        case "B2":
+            return 4;
+        case "B3":
+            return 5;
+        case "C1":
+            return 6;
+        case "C2":
+            return 7;
+        case "C3":
+            return 8;
+        default:
+            return -1; // Cuadrante inválido
+    }
+}
+
+
+}
+//partidaActiva = false; 
+            // para que salga rapido mientras no exista la logica para el el juego, a eliminar
             //  logica de turnos etc
             // pense tipo si pones la letra Q que pregunte si quiere que se termine la partida antes??
             // System.out.print("¿Terminar partida? (S/N): ");
@@ -134,6 +205,3 @@ public class Obligatorio1 {
             //     partidaActiva = false;
             //     System.out.println("Partida terminada.");
             // }
-        }
-    }
-}
