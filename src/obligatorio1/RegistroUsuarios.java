@@ -1,38 +1,38 @@
 package obligatorio1;
 
 public class RegistroUsuarios {
-    
+
     private String nombre;
-    
+
     private int edad;
-    
+
     private String alias;
 
-    // Constructor para crear una instancia de usuario
+// Constructor para crear una instancia de usuario
     public RegistroUsuarios(String nombre, int edad, String alias) {
-        
+
         this.nombre = nombre;
-        
+
         this.edad = edad;
-        
+
         this.alias = alias;
     }
-   
-    // Método para mostrar la información del usuario
+
+// Método para mostrar la información del usuario
     @Override
     public String toString() {
-        
+
         return "Nombre: " + nombre + ", Edad: " + edad + ", Alias: " + alias;
-        
+
     }
-    
-     public String getAlias() {
-        return alias; 
+
+    public String getAlias() {
+        return alias;
     }
-     
-     public void setAlias() {
-         this.alias = alias;
-     }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
 
     public String getNombre() {
         return nombre;
@@ -49,7 +49,4 @@ public class RegistroUsuarios {
     public void setEdad(int edad) {
         this.edad = edad;
     }
-    
-    
-    
 }
