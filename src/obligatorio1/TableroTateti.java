@@ -79,7 +79,7 @@ public class TableroTateti {
     int columnaTablero = (cuadranteIndex % 3) * 3 + columna; // Obtener columna en el tablero
 
     if (tablero[filaTablero][columnaTablero].equals(" ")) {
-        tablero[filaTablero][columnaTablero] = simbolo.equals("X") ? "\u001B[34mX\u001B[0m" : "\u001B[31mO\u001B[0m"; // Colores para X y O
+         tablero[filaTablero][columnaTablero] = simbolo.equals("X") ? "\u001B[31mX\u001B[0m" : "\u001B[34mO\u001B[0m"; // Colores para X y O
         return true; // Jugada exitosa
     } else {
         return false; // Posición ya ocupada
