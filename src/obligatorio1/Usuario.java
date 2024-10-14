@@ -1,29 +1,22 @@
 package obligatorio1;
 
-public class RegistroUsuarios {
+public class Usuario {
 
     private String nombre;
-
     private int edad;
-
     private String alias;
 
 // Constructor para crear una instancia de usuario
-    public RegistroUsuarios(String nombre, int edad, String alias) {
-
+    public Usuario(String nombre, int edad, String alias) {
         this.nombre = nombre;
-
         this.edad = edad;
-
         this.alias = alias;
     }
 
 // Método para mostrar la información del usuario
     @Override
     public String toString() {
-
         return "Nombre: " + nombre + ", Edad: " + edad + ", Alias: " + alias;
-
     }
 
     public String getAlias() {

@@ -1,6 +1,7 @@
 package obligatorio1;
 
 public class TableroTateti {
+
     private String[][] tablero;
 
     public TableroTateti() {
@@ -15,36 +16,169 @@ public class TableroTateti {
             }
         }
     }
+// seleccionar por cuadrante estaria funcionando bien, para revisar y ver maneras de repetir menos codigo
 
-    public void mostrarTablero() {
+    public void mostrarTablero(String cuadranteSeleccionado) {
         for (int i = 0; i < 3; i++) {
-            imprimirBordeDivisor();
-            imprimirFilas(i);
+            imprimirBordeDivisor(cuadranteSeleccionado, i);
+            imprimirFilas(cuadranteSeleccionado, i);
         }
-        imprimirBordeDivisor();
+        imprimirBordeDivisor(cuadranteSeleccionado, 4);
     }
 
-    private void imprimirBordeDivisor() {
-        System.out.println("\u001B[32m*******************\u001B[0m");
+    private void imprimirBordeDivisor(String cuadranteSeleccionado, int filas) {
+        String bordeGeneral = "\u001B[42m*******************\u001B[0m";
+        String bordeResaltado = "\u001B[43m*******\u001B[0m";
+        String parteA = "\u001B[42m******\u001B[0m";
+        String parteB = "\u001B[42m************\u001B[0m";
+
+        boolean esCuadrante1 = cuadranteSeleccionado.contains("1");
+        boolean esCuadrante2 = cuadranteSeleccionado.contains("2");
+        boolean esCuadrante3 = cuadranteSeleccionado.contains("3");
+        boolean esParteA = cuadranteSeleccionado.contains("A");
+        boolean esParteB = cuadranteSeleccionado.contains("B");
+        boolean esParteC = cuadranteSeleccionado.contains("C");
+
+        // definimos cuando usar borde resaltado
+        boolean imprimirResaltado = (esParteA && (filas == 0 || filas == 1))
+                || (esParteB && (filas == 1 || filas == 2))
+                || (esParteC && (filas == 2 || filas == 3 || filas == 4));
+
+        if (esCuadrante1) {
+            if (imprimirResaltado) {
+                System.out.println(bordeResaltado + parteB);
+            } else {
+                System.out.println(bordeGeneral);
+            }
+        } else if (esCuadrante2) {
+            if (imprimirResaltado) {
+                System.out.println(parteA + bordeResaltado + parteA);
+            } else {
+                System.out.println(bordeGeneral);
+            }
+        } else if (esCuadrante3) {
+            if (imprimirResaltado) {
+                System.out.println(parteB + bordeResaltado);
+            } else {
+                System.out.println(bordeGeneral);
+            }
+        } else {
+            System.out.println(bordeGeneral);
+        }
     }
 
-    private void imprimirFilas(int superFila) {
+    private void imprimirFilas(String cuadranteSeleccionado, int superFila) {
+
         for (int fila = 0; fila < 3; fila++) {
-            System.out.print("\u001B[32m*\u001B[0m");  // Asterisco en verde
+            if (cuadranteSeleccionado.contains("A") && !cuadranteSeleccionado.contains("2") && !cuadranteSeleccionado.contains("3") && superFila == 0) {
+
+                System.out.print("\u001B[43m*\u001B[0m");
+            } else if (cuadranteSeleccionado.contains("B") && !cuadranteSeleccionado.contains("2") && !cuadranteSeleccionado.contains("3") && superFila == 1) {
+                System.out.print("\u001B[43m*\u001B[0m");
+
+            } else if (cuadranteSeleccionado.contains("C") && !cuadranteSeleccionado.contains("2") && !cuadranteSeleccionado.contains("3") && superFila == 2) {
+                System.out.print("\u001B[43m*\u001B[0m");
+
+            } else {
+                System.out.print("\u001B[42m*\u001B[0m");
+
+            }
+
             for (int superColumna = 0; superColumna < 3; superColumna++) {
                 System.out.print(tablero[superFila * 3 + fila][superColumna * 3] + "|"
                         + tablero[superFila * 3 + fila][superColumna * 3 + 1] + "|"
                         + tablero[superFila * 3 + fila][superColumna * 3 + 2]);
 
                 if (superColumna != 2) {
-                    System.out.print("\u001B[32m*\u001B[0m");  // Asterisco en verde
+                    if (cuadranteSeleccionado.contains("A") && superFila == 0) {
+                        if ((cuadranteSeleccionado.contains("1") || cuadranteSeleccionado.contains("2")) && superColumna == 0 && (fila == 0 || fila == 1 || fila == 2)) {
+                            System.out.print("\u001B[43m*\u001B[0m");
+                        } else if ((cuadranteSeleccionado.contains("2") || cuadranteSeleccionado.contains("3")) && superColumna == 1 && (fila == 0 || fila == 1 || fila == 2)) {
+                            System.out.print("\u001B[43m*\u001B[0m");
+                        } else {
+                            System.out.print("\u001B[42m*\u001B[0m");  // Asterisco con fondo verde
+                        }
+
+                    } else if (cuadranteSeleccionado.contains("B") && superFila == 1) {
+                        if ((cuadranteSeleccionado.contains("1") || cuadranteSeleccionado.contains("2")) && superColumna == 0 && (fila == 0 || fila == 1 || fila == 2)) {
+                            System.out.print("\u001B[43m*\u001B[0m");
+                        } else if ((cuadranteSeleccionado.contains("2") || cuadranteSeleccionado.contains("3")) && superColumna == 1 && (fila == 0 || fila == 1 || fila == 2)) {
+                            System.out.print("\u001B[43m*\u001B[0m");
+                        } else {
+                            System.out.print("\u001B[42m*\u001B[0m");
+                        }
+
+                    } else if (cuadranteSeleccionado.contains("C") && superFila == 2) {
+                        if ((cuadranteSeleccionado.contains("1") || cuadranteSeleccionado.contains("2")) && superColumna == 0 && (fila == 0 || fila == 1 || fila == 2)) {
+                            System.out.print("\u001B[43m*\u001B[0m");
+                        } else if ((cuadranteSeleccionado.contains("2") || cuadranteSeleccionado.contains("3")) && superColumna == 1 && (fila == 0 || fila == 1 || fila == 2)) {
+                            System.out.print("\u001B[43m*\u001B[0m");
+                        } else {
+                            System.out.print("\u001B[42m*\u001B[0m");
+                        }
+                    } else {
+                        System.out.print("\u001B[42m*\u001B[0m");
+                    }
+
                 }
             }
-            System.out.println("\u001B[32m*\u001B[0m");  // Asterisco en verde
+            if (cuadranteSeleccionado.contains("A") && !cuadranteSeleccionado.contains("2") && !cuadranteSeleccionado.contains("1") && superFila == 0) {
 
-            if (fila != 2) {
-                System.out.println("\u001B[32m*-+-+-*-+-+-*-+-+-*\u001B[0m");  // Solo los asteriscos en verde
+                System.out.println("\u001B[43m*\u001B[0m");
+                // System.out.print("hi");
+            } else if (cuadranteSeleccionado.contains("B") && !cuadranteSeleccionado.contains("2") && !cuadranteSeleccionado.contains("1") && superFila == 1) {
+
+                System.out.println("\u001B[43m*\u001B[0m");
+            } else if (cuadranteSeleccionado.contains("C") && !cuadranteSeleccionado.contains("2") && !cuadranteSeleccionado.contains("1") && superFila == 2) {
+
+                System.out.println("\u001B[43m*\u001B[0m");
+            } else {
+                System.out.println("\u001B[42m*\u001B[0m");  // Asterisco final con fondo verde
             }
+            // if (fila != 2) {
+            // }
+            if (fila != 2) {
+                String borde1, borde2, borde3, borde4;
+
+                if (cuadranteSeleccionado.contains("A") && superFila == 0 && (fila == 0 || fila == 1)) {
+                    if (cuadranteSeleccionado.contains("1")) {
+                        System.out.println("\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m");
+                    }
+                    if (cuadranteSeleccionado.contains("2")) {
+                        System.out.println("\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m");
+                    }
+                    if (cuadranteSeleccionado.contains("3")) {
+                        System.out.println("\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m");
+                    }
+
+                } else if (cuadranteSeleccionado.contains("B") && superFila == 1 && (fila == 0 || fila == 1)) {
+                    if (cuadranteSeleccionado.contains("1")) {
+                        System.out.println("\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m");
+                    }
+                    if (cuadranteSeleccionado.contains("2")) {
+                        System.out.println("\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m");
+                    }
+                    if (cuadranteSeleccionado.contains("3")) {
+                        System.out.println("\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m");
+                    }
+
+                } else if (cuadranteSeleccionado.contains("C") && superFila == 2 && (fila == 0 || fila == 1)) {
+                    if (cuadranteSeleccionado.contains("1")) {
+                        System.out.println("\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m");
+                    }
+                    if (cuadranteSeleccionado.contains("2")) {
+                        System.out.println("\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m");
+                    }
+                    if (cuadranteSeleccionado.contains("3")) {
+                        System.out.println("\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m");
+                    }
+                } else {
+
+                    System.out.println("\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m");  // Sin fondo verde en esta línea
+
+                }
+            }
+
         }
     }
 
@@ -53,23 +187,41 @@ public class TableroTateti {
         int fila, columna;
         switch (posicion) {
             case "A1":
-                fila = 0; columna = 0; break;
+                fila = 0;
+                columna = 0;
+                break;
             case "A2":
-                fila = 0; columna = 1; break;
+                fila = 0;
+                columna = 1;
+                break;
             case "A3":
-                fila = 0; columna = 2; break;
+                fila = 0;
+                columna = 2;
+                break;
             case "B1":
-                fila = 1; columna = 0; break;
+                fila = 1;
+                columna = 0;
+                break;
             case "B2":
-                fila = 1; columna = 1; break;
+                fila = 1;
+                columna = 1;
+                break;
             case "B3":
-                fila = 1; columna = 2; break;
+                fila = 1;
+                columna = 2;
+                break;
             case "C1":
-                fila = 2; columna = 0; break;
+                fila = 2;
+                columna = 0;
+                break;
             case "C2":
-                fila = 2; columna = 1; break;
+                fila = 2;
+                columna = 1;
+                break;
             case "C3":
-                fila = 2; columna = 2; break;
+                fila = 2;
+                columna = 2;
+                break;
             default:
                 return false; // Posición inválida
         }

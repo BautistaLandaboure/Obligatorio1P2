@@ -1,7 +1,7 @@
 package obligatorio1;
 
-import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Obligatorio1 {
 
@@ -79,20 +79,54 @@ public class Obligatorio1 {
     private static void registrarJugador() {
         Scanner in = new Scanner(System.in);
 
-        System.out.print("Ingrese nombre: ");
-        String nombre = in.nextLine();
-        System.out.print("Ingrese edad: ");
-        int edad = in.nextInt();
-        in.nextLine();
-        System.out.print("Ingrese alias: ");
-        String alias = in.nextLine();
+        // Validación del nombre
+        String nombre = "";
+        while (nombre.isEmpty()) {
+            System.out.print("Ingrese nombre: ");
+            nombre = in.nextLine().trim();
+            if (nombre.isEmpty()) {
+                System.out.println("El nombre no puede estar vacío. Por favor, ingrese un nombre.");
+            }
+        }
 
-        boolean registrado = manejoRegistro.registrarUsuario(nombre, edad, alias);
+        int edad = 0;
+        boolean edadValida = false;
+        while (!edadValida) {
+            System.out.print("Ingrese edad: ");
+            try {
+                edad = Integer.parseInt(in.nextLine());
+                if (edad < 1 || edad > 120) {  // Verificación de edad en un rango razonable
+                    System.out.println("Por favor, ingrese una edad válida entre 1 y 120 años.");
+                } else {
+                    edadValida = true;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Debe ingresar un número para la edad. Intente de nuevo.");
+            }
+        }
 
-        if (!registrado) {
-            System.out.println("No se pudo registrar el jugador.");
-        } else {
+        // Validación del alias
+        String alias = "";
+        boolean aliasValido = false;
+        while (!aliasValido) {
+            System.out.print("Ingrese alias: ");
+            alias = in.nextLine().trim();
+            if (alias.isEmpty()) {
+                System.out.println("El alias no puede estar vacío. Por favor, ingrese un alias.");
+            } else if (manejoRegistro.aliasExiste(alias)) {
+                System.out.println("El alias ya está en uso. Intente con otro alias.");
+            } else {
+                aliasValido = true;
+            }
+        }
+
+        Usuario nuevoUsuario = new Usuario(nombre, edad, alias);
+        boolean registrado = manejoRegistro.registrarUsuario(nuevoUsuario);
+
+        if (registrado) {
             System.out.println("Jugador registrado: Nombre: " + nombre + ", Edad: " + edad + ", Alias: " + alias);
+        } else {
+            System.out.println("No se pudo registrar el jugador.");
         }
     }
 
@@ -105,7 +139,7 @@ public class Obligatorio1 {
         }
 
         System.out.println("Jugadores disponibles:");
-        ArrayList<RegistroUsuarios> usuarios = manejoRegistro.getUsuarios();
+        ArrayList<Usuario> usuarios = manejoRegistro.getUsuarios();
         for (int i = 0; i < usuarios.size(); i++) {
             System.out.println((i + 1) + ". " + usuarios.get(i).getAlias());
         }
@@ -116,18 +150,20 @@ public class Obligatorio1 {
         int jugador2Index = in.nextInt() - 1;
         in.nextLine(); // Limpiar el buffer
 
-        RegistroUsuarios jugador1 = usuarios.get(jugador1Index);
-        RegistroUsuarios jugador2 = usuarios.get(jugador2Index);
+        Usuario jugador1 = usuarios.get(jugador1Index);
+        Usuario jugador2 = usuarios.get(jugador2Index);
 
         System.out.println("¡Comienza el juego entre " + jugador1.getAlias() + " y " + jugador2.getAlias() + "!");
+        String cuadranteElegido = "";
 
         tableroTateti.inicializarTablero(); // Reiniciar el tablero antes de iniciar el juego
-        tableroTateti.mostrarTablero();
+
+        tableroTateti.mostrarTablero(cuadranteElegido);
 
         boolean partidaActiva = true;
         
         String jugadorActual = "X";  // Empieza el jugador 1
-        RegistroUsuarios jugadorActualRegistro = jugador1; // El jugador 1 inicia
+        Usuario jugadorActualRegistro = jugador1; // El jugador 1 inicia
 
         int siguienteCuadrante = -1; // -1 indica que cualquier cuadrante puede ser elegido
 
@@ -135,7 +171,7 @@ public class Obligatorio1 {
             if (siguienteCuadrante == -1) {
                 // El jugador puede elegir cualquier cuadrante
                 System.out.println(jugadorActualRegistro.getAlias() + ", elige un cuadrante (A1, A2, ..., C3): ");
-                String cuadranteElegido = in.nextLine().toUpperCase();
+                cuadranteElegido = in.nextLine().toUpperCase();
 
                 int cuadranteIndex = obtenerCuadranteIndex(cuadranteElegido);
 
@@ -155,7 +191,7 @@ public class Obligatorio1 {
                 boolean posicionValida = tableroTateti.jugarEnCuadrante(cuadranteIndex, posicionElegida, jugadorActual);
                 
                 if (posicionValida) {
-                    tableroTateti.mostrarTablero();
+                    tableroTateti.mostrarTablero(cuadranteElegido);
                     
                     // Determinar el siguiente cuadrante basado en la posición elegida
                     int nuevoCuadrante = obtenerCuadranteIndexDesdePosicion(posicionElegida);
@@ -171,7 +207,7 @@ public class Obligatorio1 {
                         }
                     }
                     
-                    // Cambia de jugador   
+                    // Cambia de jugador
                     if (jugadorActual.equals("X")) {
                         jugadorActual = "O";
                         jugadorActualRegistro = jugador2;
@@ -184,7 +220,7 @@ public class Obligatorio1 {
                 }
             } else {
                 // El jugador debe jugar en el cuadrante especificado
-                String cuadranteElegido = indexACuadranteLabel(siguienteCuadrante);
+                 cuadranteElegido = indexACuadranteLabel(siguienteCuadrante);
                 System.out.println(jugadorActualRegistro.getAlias() + ", debes jugar en el cuadrante " + cuadranteElegido + ".");
                 
                 if (tableroTateti.estaCuadranteCompleto(siguienteCuadrante)) {
@@ -199,7 +235,7 @@ public class Obligatorio1 {
                 boolean posicionValida = tableroTateti.jugarEnCuadrante(siguienteCuadrante, posicionElegida, jugadorActual);
                 
                 if (posicionValida) {
-                    tableroTateti.mostrarTablero();
+                    tableroTateti.mostrarTablero(cuadranteElegido);
                     
                     // Determinar el siguiente cuadrante basado en la posición elegida
                     int nuevoCuadrante = obtenerCuadranteIndexDesdePosicion(posicionElegida);
