@@ -280,4 +280,21 @@ public class Obligatorio1 {
                 -1;
         };
     }
+    private static void mostrarRanking() {
+        
+    System.out.println("\nRanking de Jugadores:");
+    
+    ArrayList<Usuario> usuarios = manejoRegistro.getUsuarios();
+    
+    for (Usuario usuario : usuarios) {
+        
+        System.out.print(usuario.getAlias() + " | ");
+        
+        for (int i = 0; i < usuario.getVictorias(); i++) {
+            
+            System.out.print("#");
+        }
+        System.out.println(); 
+    }
+}
 }
