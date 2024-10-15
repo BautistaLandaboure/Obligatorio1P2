@@ -5,12 +5,14 @@ public class Usuario {
     private String nombre;
     private int edad;
     private String alias;
+    private int victorias;
 
 // Constructor para crear una instancia de usuario
     public Usuario(String nombre, int edad, String alias) {
         this.nombre = nombre;
         this.edad = edad;
         this.alias = alias;
+        this.victorias = 0;
     }
 
 // Método para mostrar la información del usuario
@@ -41,5 +43,13 @@ public class Usuario {
 
     public void setEdad(int edad) {
         this.edad = edad;
+    }
+    
+    public int getVictorias(){
+        return victorias;
+    }
+    
+     public void incrementarVictorias() {
+        this.victorias++;
     }
 }
