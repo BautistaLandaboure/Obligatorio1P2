@@ -8,7 +8,7 @@ public class Obligatorio1 {
     private static ManejoRegistro manejoRegistro = new ManejoRegistro();
     private static TableroTateti tableroTateti = new TableroTateti();
 
-    public static void main(String[] args) {
+   ]public static void main(String[] args) {
         
          // mostrarAnimacionBienvenida();
 
@@ -16,22 +16,34 @@ public class Obligatorio1 {
         Scanner in = new Scanner(System.in);
 
         while (opcion != 4) {
-            mostrarMenu();
-            opcion = in.nextInt();
-            in.nextLine();
+    mostrarMenu();
+    try {
+        opcion = in.nextInt();
+        in.nextLine(); // Limpiar el buffer
+    } catch (Exception e) {
+        System.out.println("Por favor, ingrese un número válido.");
+        in.nextLine(); // Limpiar el buffer en caso de error
+        continue; // Volver al inicio del bucle para pedir la opción de nuevo
+    }
 
-            if (opcion == 1) {
-                registrarJugador();
-            } else if (opcion == 2) {
-                iniciarJuegoEntreDosPersonas();
-            } else if (opcion == 3) {
-                mostrarRanking();
-            } else if (opcion == 4) {
-                System.out.println("Gracias por jugar");
-            } else {
-                System.out.println("Opción no válida");
+            switch (opcion) {
+                case 1:
+                    registrarJugador();
+                    break;
+                case 2:
+                    iniciarJuegoEntreDosPersonas();
+                    break;
+                case 3:
+                    mostrarRanking();
+                    break;
+                case 4:
+                    System.out.println("Gracias por jugar");
+                    break;
+                default:
+                    System.out.println("Opción no válida");
+                    break;
             }
-        }
+}
     }
 
     private static void mostrarAnimacionBienvenida() {
