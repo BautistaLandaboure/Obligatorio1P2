@@ -3,9 +3,11 @@ package obligatorio1;
 public class TableroTateti {
 
     private String[][] tablero;
+    private int[] miniCuadrantesGanados;
 
     public TableroTateti() {
         this.tablero = new String[9][9];
+        this.miniCuadrantesGanados = new int[9];
         inicializarTablero();
     }
 
@@ -183,61 +185,166 @@ public class TableroTateti {
     }
 
     public boolean jugarEnCuadrante(int cuadranteIndex, String posicion, String simbolo) {
-        // Convierte la posición (A1, A2, etc.) a coordenadas en el array
         int fila, columna;
         switch (posicion) {
-            case "A1":
+            case "A1" -> {
                 fila = 0;
                 columna = 0;
-                break;
-            case "A2":
+            }
+            case "A2" -> {
                 fila = 0;
                 columna = 1;
-                break;
-            case "A3":
+            }
+            case "A3" -> {
                 fila = 0;
                 columna = 2;
-                break;
-            case "B1":
+            }
+            case "B1" -> {
                 fila = 1;
                 columna = 0;
-                break;
-            case "B2":
+            }
+            case "B2" -> {
                 fila = 1;
                 columna = 1;
-                break;
-            case "B3":
+            }
+            case "B3" -> {
                 fila = 1;
                 columna = 2;
-                break;
-            case "C1":
+            }
+            case "C1" -> {
                 fila = 2;
                 columna = 0;
-                break;
-            case "C2":
+            }
+            case "C2" -> {
                 fila = 2;
                 columna = 1;
-                break;
-            case "C3":
+            }
+            case "C3" -> {
                 fila = 2;
                 columna = 2;
-                break;
-            default:
-                return false; // Posición inválida
+            }
+            default -> {
+                return false;
+            }
         }
 
-        int filaTablero = (cuadranteIndex / 3) * 3 + fila; // Obtener fila en el tablero
-        int columnaTablero = (cuadranteIndex % 3) * 3 + columna; // Obtener columna en el tablero
+        int filaTablero = (cuadranteIndex / 3) * 3 + fila;
+        int columnaTablero = (cuadranteIndex % 3) * 3 + columna;
 
         if (tablero[filaTablero][columnaTablero].equals(" ")) {
-            tablero[filaTablero][columnaTablero] = simbolo.equals("X") ? "\u001B[34mX\u001B[0m" : "\u001B[31mO\u001B[0m"; // Colores para X y O
-            return true; // Jugada exitosa
+            tablero[filaTablero][columnaTablero] = simbolo.equals("X") ? "\u001B[31mX\u001B[0m" : "\u001B[34mO\u001B[0m";
+            return true;
         } else {
-            return false; // Posición ya ocupada
+            return false;
         }
     }
 
-    // Método para verificar si un cuadrante está completo
+    public boolean verificarMiniCuadranteGanado(int cuadranteIndex, String simbolo) {
+        int filaBase = (cuadranteIndex / 3) * 3;
+        int colBase = (cuadranteIndex % 3) * 3;
+
+        // Verificar filas
+        for (int i = 0; i < 3; i++) {
+            System.out.println("Verificando fila " + i + ": " + limpiarColor(tablero[filaBase + i][colBase]) + ", " + limpiarColor(tablero[filaBase + i][colBase + 1]) + ", " + limpiarColor(tablero[filaBase + i][colBase + 2]));
+            if (limpiarColor(tablero[filaBase + i][colBase]).equals(simbolo)
+                    && limpiarColor(tablero[filaBase + i][colBase + 1]).equals(simbolo)
+                    && limpiarColor(tablero[filaBase + i][colBase + 2]).equals(simbolo)) {
+                System.out.println("Ganó en fila");
+                return true;
+            }
+        }
+
+        // Verificar columnas
+        for (int j = 0; j < 3; j++) {
+            System.out.println("Verificando columna " + j + ": " + limpiarColor(tablero[filaBase][colBase + j]) + ", " + limpiarColor(tablero[filaBase + 1][colBase + j]) + ", " + limpiarColor(tablero[filaBase + 2][colBase + j]));
+            if (limpiarColor(tablero[filaBase][colBase + j]).equals(simbolo)
+                    && limpiarColor(tablero[filaBase + 1][colBase + j]).equals(simbolo)
+                    && limpiarColor(tablero[filaBase + 2][colBase + j]).equals(simbolo)) {
+                System.out.println("Ganó en columna");
+                return true;
+            }
+        }
+
+        // Verificar diagonal principal
+        System.out.println("Verificando diagonal principal: " + limpiarColor(tablero[filaBase][colBase]) + ", " + limpiarColor(tablero[filaBase + 1][colBase + 1]) + ", " + limpiarColor(tablero[filaBase + 2][colBase + 2]));
+        if (limpiarColor(tablero[filaBase][colBase]).equals(simbolo)
+                && limpiarColor(tablero[filaBase + 1][colBase + 1]).equals(simbolo)
+                && limpiarColor(tablero[filaBase + 2][colBase + 2]).equals(simbolo)) {
+            System.out.println("Ganó en diagonal principal");
+            return true;
+        }
+
+        // Verificar diagonal secundaria
+        System.out.println("Verificando diagonal secundaria: " + limpiarColor(tablero[filaBase][colBase + 2]) + ", " + limpiarColor(tablero[filaBase + 1][colBase + 1]) + ", " + limpiarColor(tablero[filaBase + 2][colBase]));
+        if (limpiarColor(tablero[filaBase][colBase + 2]).equals(simbolo)
+                && limpiarColor(tablero[filaBase + 1][colBase + 1]).equals(simbolo)
+                && limpiarColor(tablero[filaBase + 2][colBase]).equals(simbolo)) {
+            System.out.println("Ganó en diagonal secundaria");
+            return true;
+        }
+
+        System.out.println("No ganó en ninguna fila, columna o diagonal");
+        return false;
+    }
+
+    public void marcarCuadranteGanado(int cuadranteIndex, String simbolo) {
+        int filaBase = (cuadranteIndex / 3) * 3;
+        int colBase = (cuadranteIndex % 3) * 3;
+        String colorGanador = simbolo.equals("X") ? "\u001B[31mX\u001B[0m" : "\u001B[34mO\u001B[0m";
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                tablero[filaBase + i][colBase + j] = colorGanador;
+            }
+        }
+        miniCuadrantesGanados[cuadranteIndex] = simbolo.equals("X") ? 1 : 2;
+    }
+
+    public boolean verificarJuegoGanado(String simbolo) {
+        int valorSimbolo = simbolo.equals("X") ? 1 : 2;
+
+        // Verificar filas
+        for (int i = 0; i < 3; i++) {
+            if (miniCuadrantesGanados[i * 3] == valorSimbolo
+                    && miniCuadrantesGanados[i * 3 + 1] == valorSimbolo
+                    && miniCuadrantesGanados[i * 3 + 2] == valorSimbolo) {
+                return true;
+            }
+        }
+
+        // Verificar columnas
+        for (int j = 0; j < 3; j++) {
+            if (miniCuadrantesGanados[j] == valorSimbolo
+                    && miniCuadrantesGanados[j + 3] == valorSimbolo
+                    && miniCuadrantesGanados[j + 6] == valorSimbolo) {
+                return true;
+            }
+        }
+
+        // Verificar diagonales
+        if (miniCuadrantesGanados[0] == valorSimbolo
+                && miniCuadrantesGanados[4] == valorSimbolo
+                && miniCuadrantesGanados[8] == valorSimbolo) {
+            return true;
+        }
+
+        if (miniCuadrantesGanados[2] == valorSimbolo
+                && miniCuadrantesGanados[4] == valorSimbolo
+                && miniCuadrantesGanados[6] == valorSimbolo) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean tableroCompleto() {
+        for (int i = 0; i < 9; i++) {
+            if (miniCuadrantesGanados[i] == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean estaCuadranteCompleto(int cuadranteIndex) {
         for (int fila = 0; fila < 3; fila++) {
             for (int col = 0; col < 3; col++) {
@@ -250,4 +357,10 @@ public class TableroTateti {
         }
         return true; // Todas las posiciones están ocupadas
     }
+
+    // Función auxiliar para limpiar los colores del símbolo
+    private String limpiarColor(String valor) {
+        return valor.replaceAll("\\u001B\\[[;\\d]*m", ""); // Elimina los códigos de colores ANSI
+    }
+
 }
