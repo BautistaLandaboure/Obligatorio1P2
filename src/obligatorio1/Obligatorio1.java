@@ -24,7 +24,8 @@ public class Obligatorio1 {
                 registrarJugador();
             } else if (opcion == 2) {
                 iniciarJuegoEntreDosPersonas();
-            } else if (opcion == 3) {// Mostrar ranking (pendiente)
+            } else if (opcion == 3) {
+                mostrarRanking();
             } else if (opcion == 4) {
                 System.out.println("Gracias por jugar");
             } else {
@@ -130,82 +131,103 @@ public class Obligatorio1 {
         }
     }
 
-    private static void iniciarJuegoEntreDosPersonas() {
-        Scanner in = new Scanner(System.in);
+   private static void iniciarJuegoEntreDosPersonas() {
+    Scanner in = new Scanner(System.in);
 
-        if (manejoRegistro.getUsuarios().size() < 2) {
-            System.out.println("Se necesitan al menos dos jugadores registrados para jugar.");
-            return;
-        }
+    if (manejoRegistro.getUsuarios().size() < 2) {
+        System.out.println("Se necesitan al menos dos jugadores registrados para jugar.");
+        return;
+    }
 
-        System.out.println("Jugadores disponibles:");
-        ArrayList<Usuario> usuarios = manejoRegistro.getUsuarios();
-        for (int i = 0; i < usuarios.size(); i++) {
-            System.out.println((i + 1) + ". " + usuarios.get(i).getAlias());
-        }
+    System.out.println("Jugadores disponibles:");
+    ArrayList<Usuario> usuarios = manejoRegistro.getUsuarios();
+    for (int i = 0; i < usuarios.size(); i++) {
+        System.out.println((i + 1) + ". " + usuarios.get(i).getAlias());
+    }
 
-        System.out.print("Seleccione el jugador 1 (número): ");
-        int jugador1Index = in.nextInt() - 1;
-        System.out.print("Seleccione el jugador 2 (número): ");
-        int jugador2Index = in.nextInt() - 1;
-        in.nextLine(); // Limpiar el buffer
+    System.out.print("Seleccione el jugador 1 (número): ");
+    int jugador1Index = in.nextInt() - 1;
+    System.out.print("Seleccione el jugador 2 (número): ");
+    int jugador2Index = in.nextInt() - 1;
+    in.nextLine(); // Limpiar el buffer
 
-        Usuario jugador1 = usuarios.get(jugador1Index);
-        Usuario jugador2 = usuarios.get(jugador2Index);
+    Usuario jugador1 = usuarios.get(jugador1Index);
+    Usuario jugador2 = usuarios.get(jugador2Index);
 
-        System.out.println("¡Comienza el juego entre " + jugador1.getAlias() + " y " + jugador2.getAlias() + "!");
-        tableroTateti.inicializarTablero(); // Reiniciar el tablero antes de iniciar el juego
-        tableroTateti.mostrarTablero(""); // Mostrar tablero inicial
-        String jugadorActual = "X";  // Empieza el jugador 1 (X es rojo)
-        Usuario jugadorActualRegistro = jugador1;
+    System.out.println("¡Comienza el juego entre " + jugador1.getAlias() + " y " + jugador2.getAlias() + "!");
+    tableroTateti.inicializarTablero(); // Reiniciar el tablero antes de iniciar el juego
+    tableroTateti.mostrarTablero(""); // Mostrar tablero inicial
+    String jugadorActual = "X";  // Empieza el jugador 1 (X es rojo)
+    Usuario jugadorActualRegistro = jugador1;
 
-        int siguienteCuadrante = -1; // -1 indica que cualquier cuadrante puede ser elegido
-        boolean partidaActiva = true;
+    int siguienteCuadrante = -1; // -1 indica que cualquier cuadrante puede ser elegido
+    boolean partidaActiva = true;
 
-        while (partidaActiva) {
-            String cuadranteElegido;
-            if (siguienteCuadrante == -1) {
-                System.out.println(jugadorActualRegistro.getAlias() + ", elige un cuadrante (A1, A2, ..., C3): ");
-                cuadranteElegido = in.nextLine().toUpperCase();
-            } else {
-                cuadranteElegido = indexACuadranteLabel(siguienteCuadrante);
-                System.out.println(jugadorActualRegistro.getAlias() + ", debes jugar en el cuadrante " + cuadranteElegido + ".");
-            }int cuadranteIndex = obtenerCuadranteIndex(cuadranteElegido);
-            if (cuadranteIndex == -1 || tableroTateti.estaCuadranteCompleto(cuadranteIndex)) {
-                System.out.println("Cuadrante inválido o completo. Intente de nuevo.");
-                continue;
-            }// Mostrar el tablero actualizado con el nuevo cuadrante resaltado
-            tableroTateti.mostrarTablero(cuadranteElegido);
-            System.out.println("Elige una posición en el cuadrante " + cuadranteElegido + " (A1, A2, ..., C3): ");
-            String posicionElegida = in.nextLine().toUpperCase();
-            boolean posicionValida = tableroTateti.jugarEnCuadrante(cuadranteIndex, posicionElegida, jugadorActual);
-            if (posicionValida) {
-                tableroTateti.mostrarTablero(cuadranteElegido);
-                if (tableroTateti.verificarMiniCuadranteGanado(cuadranteIndex, jugadorActual)) {
-                    tableroTateti.marcarCuadranteGanado(cuadranteIndex, jugadorActual);
-                    if (tableroTateti.verificarJuegoGanado(jugadorActual)) {
-                        System.out.println("¡" + jugadorActualRegistro.getAlias() + " ha ganado el juego!");
-                        partidaActiva = false;
-                        continue;
-                    }
-                    }
-                 siguienteCuadrante = obtenerCuadranteIndexDesdePosicion(posicionElegida);
-                // Cambiar de jugador
-                if (jugadorActual.equals("X")) {
-                    jugadorActual = "O";
-                    jugadorActualRegistro = jugador2;
-                } else {jugadorActual = "X";
-                    jugadorActualRegistro = jugador1;
+    while (partidaActiva) {
+        String cuadranteElegido;
+        if (siguienteCuadrante == -1) {
+            System.out.println(jugadorActualRegistro.getAlias() + ", elige un cuadrante (A1, A2, ..., C3) o presiona 'X' para rendirte: ");
+            cuadranteElegido = in.nextLine().toUpperCase();
+            if (cuadranteElegido.equals("X")) {
+                System.out.println(jugadorActualRegistro.getAlias() + " se rinde. " + (jugadorActualRegistro.equals(jugador1) ? jugador2.getAlias() : jugador1.getAlias()) + " gana!");
+
+                if (jugadorActualRegistro.equals(jugador1)) {
+                    jugador2.incrementarVictorias();
+                } else {
+                    jugador1.incrementarVictorias();
                 }
-            } else {
-                System.out.println("Posición no válida o ya ocupada. Intente de nuevo.");
-            }
-            if (tableroTateti.tableroCompleto()) {
-                System.out.println("El juego ha terminado en empate.");
                 partidaActiva = false;
+                continue;
             }
+        } else {
+            cuadranteElegido = indexACuadranteLabel(siguienteCuadrante);
+            System.out.println(jugadorActualRegistro.getAlias() + ", debes jugar en el cuadrante " + cuadranteElegido + ".");
+        }
+
+        int cuadranteIndex = obtenerCuadranteIndex(cuadranteElegido);
+        if (cuadranteIndex == -1 || tableroTateti.estaCuadranteCompleto(cuadranteIndex)) {
+            System.out.println("Cuadrante inválido o completo. Intente de nuevo.");
+            continue;
+        }
+
+        // Mostrar el tablero actualizado con el nuevo cuadrante resaltado
+        tableroTateti.mostrarTablero(cuadranteElegido);
+        System.out.println("Elige una posición en el cuadrante " + cuadranteElegido + " (A1, A2, ..., C3): ");
+        String posicionElegida = in.nextLine().toUpperCase();
+        boolean posicionValida = tableroTateti.jugarEnCuadrante(cuadranteIndex, posicionElegida, jugadorActual);
+        if (posicionValida) {
+            tableroTateti.mostrarTablero(cuadranteElegido);
+            if (tableroTateti.verificarMiniCuadranteGanado(cuadranteIndex, jugadorActual)) {
+                tableroTateti.marcarCuadranteGanado(cuadranteIndex, jugadorActual);
+                if (tableroTateti.verificarJuegoGanado(jugadorActual)) {
+                    System.out.println("¡" + jugadorActualRegistro.getAlias() + " ha ganado el juego!");
+                    partidaActiva = false;
+                    continue;
+                }
+            }
+            siguienteCuadrante = obtenerCuadranteIndexDesdePosicion(posicionElegida);
+            // Cambiar de jugador
+            if (jugadorActual.equals("X")) {
+                jugadorActual = "O";
+                jugadorActualRegistro = jugador2;
+            } else {
+                jugadorActual = "X";
+                jugadorActualRegistro = jugador1;
+            }
+        } else {
+            System.out.println("Posición no válida o ya ocupada. Intente de nuevo.");
+        }
+
+        if (tableroTateti.tableroCompleto()) {
+            System.out.println("El juego ha terminado en empate.");
+            partidaActiva = false;
         }
     }
+}
+
+
+
+    
     private static int obtenerCuadranteIndexDesdePosicion(String posicion) {
         return switch (posicion) {
             case "A1" ->
@@ -280,7 +302,8 @@ public class Obligatorio1 {
                 -1;
         };
     }
-    private static void mostrarRanking() {
+     
+     private static void mostrarRanking() {
         
     System.out.println("\nRanking de Jugadores:");
     
@@ -296,5 +319,3 @@ public class Obligatorio1 {
         }
         System.out.println(); 
     }
-}
-}
