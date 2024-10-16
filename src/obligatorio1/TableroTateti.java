@@ -3,189 +3,138 @@ package obligatorio1;
 public class TableroTateti {
 
     private String[][] tablero;
-    private int[] miniCuadrantesGanados;
+    private int[] miniCuadrantesGanados; // 0 = no ganado, 1 = ganado por X, 2 = ganado por O
 
     public TableroTateti() {
-        this.tablero = new String[9][9];
+        this.tablero = new String[19][19];
         this.miniCuadrantesGanados = new int[9];
         inicializarTablero();
     }
 
     public void inicializarTablero() {
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
+        for (int i = 0; i < 19; i++) {
+            for (int j = 0; j < 19; j++) {
                 tablero[i][j] = " ";
             }
         }
-    }
-// seleccionar por cuadrante estaria funcionando bien, para revisar y ver maneras de repetir menos codigo
-
-    public void mostrarTablero(String cuadranteSeleccionado) {
-        for (int i = 0; i < 3; i++) {
-            imprimirBordeDivisor(cuadranteSeleccionado, i);
-            imprimirFilas(cuadranteSeleccionado, i);
+        for (int i = 0; i < 9; i++) {
+            miniCuadrantesGanados[i] = 0;
         }
-        imprimirBordeDivisor(cuadranteSeleccionado, 4);
     }
 
-    private void imprimirBordeDivisor(String cuadranteSeleccionado, int filas) {
-        String bordeGeneral = "\u001B[42m*******************\u001B[0m";
-        String bordeResaltado = "\u001B[43m*******\u001B[0m";
-        String parteA = "\u001B[42m******\u001B[0m";
-        String parteB = "\u001B[42m************\u001B[0m";
-
-        boolean esCuadrante1 = cuadranteSeleccionado.contains("1");
-        boolean esCuadrante2 = cuadranteSeleccionado.contains("2");
-        boolean esCuadrante3 = cuadranteSeleccionado.contains("3");
-        boolean esParteA = cuadranteSeleccionado.contains("A");
-        boolean esParteB = cuadranteSeleccionado.contains("B");
-        boolean esParteC = cuadranteSeleccionado.contains("C");
-
-        // definimos cuando usar borde resaltado
-        boolean imprimirResaltado = (esParteA && (filas == 0 || filas == 1))
-                || (esParteB && (filas == 1 || filas == 2))
-                || (esParteC && (filas == 2 || filas == 3 || filas == 4));
-
-        if (esCuadrante1) {
-            if (imprimirResaltado) {
-                System.out.println(bordeResaltado + parteB);
+    public int obtenerCuadrante(int fila, int columna) {
+        if (fila < 6) {
+            if (columna < 6) {
+                return 1;
+            } else if (columna < 12) {
+                return 2;
             } else {
-                System.out.println(bordeGeneral);
+                return 3;
             }
-        } else if (esCuadrante2) {
-            if (imprimirResaltado) {
-                System.out.println(parteA + bordeResaltado + parteA);
+        } else if (fila < 12) {
+            if (columna < 6) {
+                return 4;
+            } else if (columna < 12) {
+                return 5;
             } else {
-                System.out.println(bordeGeneral);
-            }
-        } else if (esCuadrante3) {
-            if (imprimirResaltado) {
-                System.out.println(parteB + bordeResaltado);
-            } else {
-                System.out.println(bordeGeneral);
+                return 6;
             }
         } else {
-            System.out.println(bordeGeneral);
+            if (columna < 6) {
+                return 7;
+            } else if (columna < 12) {
+                return 8;
+            } else {
+                return 9;
+            }
         }
     }
 
-    private void imprimirFilas(String cuadranteSeleccionado, int superFila) {
 
-        for (int fila = 0; fila < 3; fila++) {
-            if (cuadranteSeleccionado.contains("A") && !cuadranteSeleccionado.contains("2") && !cuadranteSeleccionado.contains("3") && superFila == 0) {
+    public void mostrarTablero(String cuadranteSeleccionado) {
+        int tamano = 19;
 
-                System.out.print("\u001B[43m*\u001B[0m");
-            } else if (cuadranteSeleccionado.contains("B") && !cuadranteSeleccionado.contains("2") && !cuadranteSeleccionado.contains("3") && superFila == 1) {
-                System.out.print("\u001B[43m*\u001B[0m");
-
-            } else if (cuadranteSeleccionado.contains("C") && !cuadranteSeleccionado.contains("2") && !cuadranteSeleccionado.contains("3") && superFila == 2) {
-                System.out.print("\u001B[43m*\u001B[0m");
-
-            } else {
-                System.out.print("\u001B[42m*\u001B[0m");
-
-            }
-
-            for (int superColumna = 0; superColumna < 3; superColumna++) {
-                System.out.print(tablero[superFila * 3 + fila][superColumna * 3] + "|"
-                        + tablero[superFila * 3 + fila][superColumna * 3 + 1] + "|"
-                        + tablero[superFila * 3 + fila][superColumna * 3 + 2]);
-
-                if (superColumna != 2) {
-                    if (cuadranteSeleccionado.contains("A") && superFila == 0) {
-                        if ((cuadranteSeleccionado.contains("1") || cuadranteSeleccionado.contains("2")) && superColumna == 0 && (fila == 0 || fila == 1 || fila == 2)) {
-                            System.out.print("\u001B[43m*\u001B[0m");
-                        } else if ((cuadranteSeleccionado.contains("2") || cuadranteSeleccionado.contains("3")) && superColumna == 1 && (fila == 0 || fila == 1 || fila == 2)) {
-                            System.out.print("\u001B[43m*\u001B[0m");
-                        } else {
-                            System.out.print("\u001B[42m*\u001B[0m");  // Asterisco con fondo verde
-                        }
-
-                    } else if (cuadranteSeleccionado.contains("B") && superFila == 1) {
-                        if ((cuadranteSeleccionado.contains("1") || cuadranteSeleccionado.contains("2")) && superColumna == 0 && (fila == 0 || fila == 1 || fila == 2)) {
-                            System.out.print("\u001B[43m*\u001B[0m");
-                        } else if ((cuadranteSeleccionado.contains("2") || cuadranteSeleccionado.contains("3")) && superColumna == 1 && (fila == 0 || fila == 1 || fila == 2)) {
-                            System.out.print("\u001B[43m*\u001B[0m");
-                        } else {
-                            System.out.print("\u001B[42m*\u001B[0m");
-                        }
-
-                    } else if (cuadranteSeleccionado.contains("C") && superFila == 2) {
-                        if ((cuadranteSeleccionado.contains("1") || cuadranteSeleccionado.contains("2")) && superColumna == 0 && (fila == 0 || fila == 1 || fila == 2)) {
-                            System.out.print("\u001B[43m*\u001B[0m");
-                        } else if ((cuadranteSeleccionado.contains("2") || cuadranteSeleccionado.contains("3")) && superColumna == 1 && (fila == 0 || fila == 1 || fila == 2)) {
-                            System.out.print("\u001B[43m*\u001B[0m");
-                        } else {
-                            System.out.print("\u001B[42m*\u001B[0m");
-                        }
-                    } else {
-                        System.out.print("\u001B[42m*\u001B[0m");
-                    }
-
+        // Construir el tablero con símbolos y asteriscos
+        for (int i = 0; i < tamano; i++) {
+            for (int j = 0; j < tamano; j++) {
+                // Verificar si ya hay un símbolo colocado en esta posición
+                if (!limpiarColor(tablero[i][j]).equals(" ")) {
+                    continue;  // Mantener el símbolo sin sobrescribirlo
                 }
-            }
-            if (cuadranteSeleccionado.contains("A") && !cuadranteSeleccionado.contains("2") && !cuadranteSeleccionado.contains("1") && superFila == 0) {
 
-                System.out.println("\u001B[43m*\u001B[0m");
-                // System.out.print("hi");
-            } else if (cuadranteSeleccionado.contains("B") && !cuadranteSeleccionado.contains("2") && !cuadranteSeleccionado.contains("1") && superFila == 1) {
-
-                System.out.println("\u001B[43m*\u001B[0m");
-            } else if (cuadranteSeleccionado.contains("C") && !cuadranteSeleccionado.contains("2") && !cuadranteSeleccionado.contains("1") && superFila == 2) {
-
-                System.out.println("\u001B[43m*\u001B[0m");
-            } else {
-                System.out.println("\u001B[42m*\u001B[0m");  // Asterisco final con fondo verde
-            }
-            // if (fila != 2) {
-            // }
-            if (fila != 2) {
-                String borde1, borde2, borde3, borde4;
-
-                if (cuadranteSeleccionado.contains("A") && superFila == 0 && (fila == 0 || fila == 1)) {
-                    if (cuadranteSeleccionado.contains("1")) {
-                        System.out.println("\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m");
-                    }
-                    if (cuadranteSeleccionado.contains("2")) {
-                        System.out.println("\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m");
-                    }
-                    if (cuadranteSeleccionado.contains("3")) {
-                        System.out.println("\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m");
-                    }
-
-                } else if (cuadranteSeleccionado.contains("B") && superFila == 1 && (fila == 0 || fila == 1)) {
-                    if (cuadranteSeleccionado.contains("1")) {
-                        System.out.println("\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m");
-                    }
-                    if (cuadranteSeleccionado.contains("2")) {
-                        System.out.println("\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m");
-                    }
-                    if (cuadranteSeleccionado.contains("3")) {
-                        System.out.println("\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m");
-                    }
-
-                } else if (cuadranteSeleccionado.contains("C") && superFila == 2 && (fila == 0 || fila == 1)) {
-                    if (cuadranteSeleccionado.contains("1")) {
-                        System.out.println("\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m");
-                    }
-                    if (cuadranteSeleccionado.contains("2")) {
-                        System.out.println("\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m");
-                    }
-                    if (cuadranteSeleccionado.contains("3")) {
-                        System.out.println("\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m" + "-+-+-" + "\u001B[43m*\u001B[0m");
-                    }
+                // Perímetro
+                if (i == 0 || i == tamano - 1 || j == 0 || j == tamano - 1) {
+                    tablero[i][j] = "\u001B[42m*\u001B[0m";
+                }
+                // Filas y columnas en posiciones 6 y 12
+                else if (i % 6 == 0 || j % 6 == 0) {
+                    tablero[i][j] = "\u001B[42m*\u001B[0m";
+                }
+                // Filas alternas con barras '|'
+                else if ((j == 2 || j == 4 || j == 8 || j == 10 || j == 14 || j == 16) && i % 2 == 1) {
+                    tablero[i][j] = "|";
+                }
+                // Filas alternas con '-' y '+'
+                else if (i % 2 == 0 && j % 2 == 1) {
+                    tablero[i][j] = "-";
+                } else if (i % 2 == 0 && j % 2 == 0 && j != 0 && j != tamano - 1) {
+                    tablero[i][j] = "+";
                 } else {
-
-                    System.out.println("\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m" + "-+-+-" + "\u001B[42m*\u001B[0m");  // Sin fondo verde en esta línea
-
+                    tablero[i][j] = " ";  // Relleno de espacios
                 }
             }
+        }
 
+        // Resaltar cuadrante si se ha seleccionado uno
+        if (!cuadranteSeleccionado.isEmpty()) {
+            limpiarResaltado();
+            resaltarCuadrante(tablero, cuadranteSeleccionado);
+        }
+
+        // Imprimir el tablero completo
+        for (int i = 0; i < tamano; i++) {
+            for (int j = 0; j < tamano; j++) {
+                System.out.print(tablero[i][j]);
+            }
+            System.out.println();
+        }
+    }
+
+    private void resaltarCuadrante(String[][] tablero, String cuadranteSeleccionado) {
+
+        // convertir el nombre del cuadrante a índices
+        int filaCuadrante = cuadranteSeleccionado.charAt(0) - 'A'; // 'A' -> 0, 'B' -> 1, 'C' -> 2
+        int colCuadrante = cuadranteSeleccionado.charAt(1) - '1'; // '1' -> 0, '2' -> 1, '3' -> 2
+
+        // Calcular las posiciones de inicio y fin del cuadrante seleccionado
+        int filaInicio = filaCuadrante * 6;
+        int filaFin = filaInicio + 6;
+
+        int colInicio = colCuadrante * 6;
+        int colFin = colInicio + 6;
+
+        // Ajustes adicionales para los bordes derecho e inferior
+        if (colCuadrante == 2 && colFin < 18) { // A3, B3, C3 (extiende el borde derecho si está dentro del límite)
+            colFin++;
+        }
+        if (filaCuadrante == 2 && filaFin < 18) { // C1, C2, C3 (extiende el borde inferior si está dentro del límite)
+            filaFin++;
+        }
+
+        // Aplicar color amarillo al perímetro del cuadrante seleccionado
+        for (int i = filaInicio; i <= filaFin; i++) {
+            for (int j = colInicio; j <= colFin; j++) {
+                if (i == filaInicio || i == filaFin || j == colInicio || j == colFin) {
+                    tablero[i][j] = "\u001B[43m*\u001B[0m"; // Amarillo
+                }
+            }
         }
     }
 
     public boolean jugarEnCuadrante(int cuadranteIndex, String posicion, String simbolo) {
         int fila, columna;
+
+        // Mapeo correcto de posiciones A1, B2, etc.
         switch (posicion) {
             case "A1" -> {
                 fila = 0;
@@ -225,117 +174,76 @@ public class TableroTateti {
             }
             default -> {
                 return false;
-            }
+            } // Posición inválida
         }
 
-        int filaTablero = (cuadranteIndex / 3) * 3 + fila;
-        int columnaTablero = (cuadranteIndex % 3) * 3 + columna;
+        // Cálculo correcto del desplazamiento dentro del tablero principal (19x19)
+        int filaTablero = (cuadranteIndex / 3) * 6 + 1 + fila * 2;
+        int columnaTablero = (cuadranteIndex % 3) * 6 + 1 + columna * 2;
 
-        if (tablero[filaTablero][columnaTablero].equals(" ")) {
-            tablero[filaTablero][columnaTablero] = simbolo.equals("X") ? "\u001B[31mX\u001B[0m" : "\u001B[34mO\u001B[0m";
+        // Validar que la posición está libre antes de asignar el símbolo
+        if (limpiarColor(tablero[filaTablero][columnaTablero]).equals(" ")) {
+            tablero[filaTablero][columnaTablero]
+                    = simbolo.equals("X") ? "\u001B[31mX\u001B[0m" : "\u001B[34mO\u001B[0m";
             return true;
         } else {
             return false;
         }
     }
 
+    // Método para verificar si un mini cuadrante ha sido ganado por un jugador
     public boolean verificarMiniCuadranteGanado(int cuadranteIndex, String simbolo) {
         int filaBase = (cuadranteIndex / 3) * 3;
         int colBase = (cuadranteIndex % 3) * 3;
 
-        // Verificar filas
         for (int i = 0; i < 3; i++) {
-            System.out.println("Verificando fila " + i + ": " + limpiarColor(tablero[filaBase + i][colBase]) + ", " + limpiarColor(tablero[filaBase + i][colBase + 1]) + ", " + limpiarColor(tablero[filaBase + i][colBase + 2]));
             if (limpiarColor(tablero[filaBase + i][colBase]).equals(simbolo)
                     && limpiarColor(tablero[filaBase + i][colBase + 1]).equals(simbolo)
                     && limpiarColor(tablero[filaBase + i][colBase + 2]).equals(simbolo)) {
-                System.out.println("Ganó en fila");
                 return true;
             }
         }
 
-        // Verificar columnas
         for (int j = 0; j < 3; j++) {
-            System.out.println("Verificando columna " + j + ": " + limpiarColor(tablero[filaBase][colBase + j]) + ", " + limpiarColor(tablero[filaBase + 1][colBase + j]) + ", " + limpiarColor(tablero[filaBase + 2][colBase + j]));
             if (limpiarColor(tablero[filaBase][colBase + j]).equals(simbolo)
                     && limpiarColor(tablero[filaBase + 1][colBase + j]).equals(simbolo)
                     && limpiarColor(tablero[filaBase + 2][colBase + j]).equals(simbolo)) {
-                System.out.println("Ganó en columna");
                 return true;
             }
         }
 
-        // Verificar diagonal principal
-        System.out.println("Verificando diagonal principal: " + limpiarColor(tablero[filaBase][colBase]) + ", " + limpiarColor(tablero[filaBase + 1][colBase + 1]) + ", " + limpiarColor(tablero[filaBase + 2][colBase + 2]));
         if (limpiarColor(tablero[filaBase][colBase]).equals(simbolo)
                 && limpiarColor(tablero[filaBase + 1][colBase + 1]).equals(simbolo)
                 && limpiarColor(tablero[filaBase + 2][colBase + 2]).equals(simbolo)) {
-            System.out.println("Ganó en diagonal principal");
             return true;
         }
 
-        // Verificar diagonal secundaria
-        System.out.println("Verificando diagonal secundaria: " + limpiarColor(tablero[filaBase][colBase + 2]) + ", " + limpiarColor(tablero[filaBase + 1][colBase + 1]) + ", " + limpiarColor(tablero[filaBase + 2][colBase]));
         if (limpiarColor(tablero[filaBase][colBase + 2]).equals(simbolo)
                 && limpiarColor(tablero[filaBase + 1][colBase + 1]).equals(simbolo)
                 && limpiarColor(tablero[filaBase + 2][colBase]).equals(simbolo)) {
-            System.out.println("Ganó en diagonal secundaria");
             return true;
         }
 
-        System.out.println("No ganó en ninguna fila, columna o diagonal");
         return false;
     }
 
+    // Método para marcar el cuadrante ganado y pintar las posiciones existentes
     public void marcarCuadranteGanado(int cuadranteIndex, String simbolo) {
         int filaBase = (cuadranteIndex / 3) * 3;
         int colBase = (cuadranteIndex % 3) * 3;
-        String colorGanador = simbolo.equals("X") ? "\u001B[31mX\u001B[0m" : "\u001B[34mO\u001B[0m";
+        String colorGanador = simbolo.equals("X") ? "\u001B[31m" : "\u001B[34m";
+
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                tablero[filaBase + i][colBase + j] = colorGanador;
+                tablero[filaBase + i][colBase + j] = colorGanador + limpiarColor(tablero[filaBase + i][colBase + j]) + "\u001B[0m";
             }
         }
+
+        // Guardar que el mini cuadrante ha sido ganado
         miniCuadrantesGanados[cuadranteIndex] = simbolo.equals("X") ? 1 : 2;
     }
 
-    public boolean verificarJuegoGanado(String simbolo) {
-        int valorSimbolo = simbolo.equals("X") ? 1 : 2;
-
-        // Verificar filas
-        for (int i = 0; i < 3; i++) {
-            if (miniCuadrantesGanados[i * 3] == valorSimbolo
-                    && miniCuadrantesGanados[i * 3 + 1] == valorSimbolo
-                    && miniCuadrantesGanados[i * 3 + 2] == valorSimbolo) {
-                return true;
-            }
-        }
-
-        // Verificar columnas
-        for (int j = 0; j < 3; j++) {
-            if (miniCuadrantesGanados[j] == valorSimbolo
-                    && miniCuadrantesGanados[j + 3] == valorSimbolo
-                    && miniCuadrantesGanados[j + 6] == valorSimbolo) {
-                return true;
-            }
-        }
-
-        // Verificar diagonales
-        if (miniCuadrantesGanados[0] == valorSimbolo
-                && miniCuadrantesGanados[4] == valorSimbolo
-                && miniCuadrantesGanados[8] == valorSimbolo) {
-            return true;
-        }
-
-        if (miniCuadrantesGanados[2] == valorSimbolo
-                && miniCuadrantesGanados[4] == valorSimbolo
-                && miniCuadrantesGanados[6] == valorSimbolo) {
-            return true;
-        }
-
-        return false;
-    }
-
+    // Método para verificar si todo el tablero ha sido completado
     public boolean tableroCompleto() {
         for (int i = 0; i < 9; i++) {
             if (miniCuadrantesGanados[i] == 0) {
@@ -343,6 +251,45 @@ public class TableroTateti {
             }
         }
         return true;
+    }
+
+    // Verificar si el jugador ha ganado el juego al obtener 3 mini cuadrantes en línea
+    public boolean verificarJuegoGanado(String simbolo) {
+        int valorSimbolo = simbolo.equals("X") ? 1 : 2;
+
+        // Verificar filas de mini cuadrantes ganados
+        for (int i = 0; i < 3; i++) {
+            if (miniCuadrantesGanados[i * 3] == valorSimbolo
+                    && miniCuadrantesGanados[i * 3 + 1] == valorSimbolo
+                    && miniCuadrantesGanados[i * 3 + 2] == valorSimbolo) {
+                return true; // Ganó en una fila de mini cuadrantes
+            }
+        }
+
+        // Verificar columnas de mini cuadrantes ganados
+        for (int j = 0; j < 3; j++) {
+            if (miniCuadrantesGanados[j] == valorSimbolo
+                    && miniCuadrantesGanados[j + 3] == valorSimbolo
+                    && miniCuadrantesGanados[j + 6] == valorSimbolo) {
+                return true; // Ganó en una columna de mini cuadrantes
+            }
+        }
+
+        // Verificar diagonal principal de mini cuadrantes ganados
+        if (miniCuadrantesGanados[0] == valorSimbolo
+                && miniCuadrantesGanados[4] == valorSimbolo
+                && miniCuadrantesGanados[8] == valorSimbolo) {
+            return true; // Ganó en la diagonal principal de mini cuadrantes
+        }
+
+        // Verificar diagonal secundaria de mini cuadrantes ganados
+        if (miniCuadrantesGanados[2] == valorSimbolo
+                && miniCuadrantesGanados[4] == valorSimbolo
+                && miniCuadrantesGanados[6] == valorSimbolo) {
+            return true;
+        }
+
+        return false;
     }
 
     public boolean estaCuadranteCompleto(int cuadranteIndex) {
@@ -358,9 +305,20 @@ public class TableroTateti {
         return true; // Todas las posiciones están ocupadas
     }
 
-    // Función auxiliar para limpiar los colores del símbolo
+    // Función auxiliar para limpiar los colores del símbolo antes de compararlo
     private String limpiarColor(String valor) {
         return valor.replaceAll("\\u001B\\[[;\\d]*m", ""); // Elimina los códigos de colores ANSI
+    }
+
+    private void limpiarResaltado() {
+        for (int i = 0; i < 19; i++) {
+            for (int j = 0; j < 19; j++) {
+                // Cambiar los bordes amarillos de vuelta al verde, si están resaltados
+                if (tablero[i][j].equals("\u001B[43m*\u001B[0m")) {
+                    tablero[i][j] = "\u001B[42m*\u001B[0m"; // Volver al verde
+                }
+            }
+        }
     }
 
 }
