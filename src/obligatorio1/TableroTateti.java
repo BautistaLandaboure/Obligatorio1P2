@@ -196,30 +196,33 @@ public class TableroTateti {
         int filaBase = (cuadranteIndex / 3) * 6 + 1;
         int colBase = (cuadranteIndex % 3) * 6 + 1;
 
-        // Verificar filas del minicuadrante
+        // Verificar filas del mini cuadrante
         for (int i = 0; i < 3; i++) {
             if (simboloIgual(tablero[filaBase + i * 2][colBase], simbolo)
                     && simboloIgual(tablero[filaBase + i * 2][colBase + 2], simbolo)
                     && simboloIgual(tablero[filaBase + i * 2][colBase + 4], simbolo)) {
+                actualizarMiniCuadranteGanado(cuadranteIndex, simbolo);
                 pintarCuadranteGanado(filaBase, colBase, simbolo);
                 return true;
             }
         }
 
-        // Verificar columnas del minicuadrante
+        // Verificar columnas del mini cuadrante
         for (int j = 0; j < 3; j++) {
             if (simboloIgual(tablero[filaBase][colBase + j * 2], simbolo)
                     && simboloIgual(tablero[filaBase + 2][colBase + j * 2], simbolo)
                     && simboloIgual(tablero[filaBase + 4][colBase + j * 2], simbolo)) {
+                actualizarMiniCuadranteGanado(cuadranteIndex, simbolo);
                 pintarCuadranteGanado(filaBase, colBase, simbolo);
                 return true;
             }
         }
 
-        // Verificar diagonales del minicuadrante
+        // Verificar diagonales del mini cuadrante
         if (simboloIgual(tablero[filaBase][colBase], simbolo)
                 && simboloIgual(tablero[filaBase + 2][colBase + 2], simbolo)
                 && simboloIgual(tablero[filaBase + 4][colBase + 4], simbolo)) {
+            actualizarMiniCuadranteGanado(cuadranteIndex, simbolo);
             pintarCuadranteGanado(filaBase, colBase, simbolo);
             return true;
         }
@@ -227,11 +230,16 @@ public class TableroTateti {
         if (simboloIgual(tablero[filaBase][colBase + 4], simbolo)
                 && simboloIgual(tablero[filaBase + 2][colBase + 2], simbolo)
                 && simboloIgual(tablero[filaBase + 4][colBase], simbolo)) {
+            actualizarMiniCuadranteGanado(cuadranteIndex, simbolo);
             pintarCuadranteGanado(filaBase, colBase, simbolo);
             return true;
         }
 
         return false;
+    }
+
+    private void actualizarMiniCuadranteGanado(int cuadranteIndex, String simbolo) {
+        miniCuadrantesGanados[cuadranteIndex] = simbolo.equals("X") ? 1 : 2;
     }
 
     // Método auxiliar para comparar símbolos ignorando el color
