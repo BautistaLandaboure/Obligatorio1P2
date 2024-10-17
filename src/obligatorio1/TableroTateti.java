@@ -1,4 +1,5 @@
 package obligatorio1;
+import java.util.ArrayList;
 
 public class TableroTateti {
 
@@ -320,5 +321,44 @@ public class TableroTateti {
             }
         }
     }
+    
+    // metodos para poder jugar contra la computadora;
+    
+    public ArrayList<Integer> obtenerCuadrantesLibres() {
+        ArrayList<Integer> cuadrantesLibres = new ArrayList<>();
 
+       
+        for (int i = 0; i < miniCuadrantesGanados.length; i++) {
+            if (miniCuadrantesGanados[i] == 0 && !estaCuadranteCompleto(i)) {
+                cuadrantesLibres.add(i);
+            }
+        }
+
+        return cuadrantesLibres;
+    }
+
+    public ArrayList<String> obtenerPosicionesLibresEnCuadrante(int cuadranteIndex) {
+        ArrayList<String> posicionesLibres = new ArrayList<>(); 
+
+        // Coordenadas base del cuadrante (calcula su posición en el tablero principal)
+        int filaBase = (cuadranteIndex / 3) * 6 + 1;
+        int colBase = (cuadranteIndex % 3) * 6 + 1;
+
+        // Revisar cada posición en el cuadrante 
+        if (limpiarColor(tablero[filaBase][colBase]).equals(" ")) posicionesLibres.add("A1");
+        if (limpiarColor(tablero[filaBase][colBase + 2]).equals(" ")) posicionesLibres.add("A2");
+        if (limpiarColor(tablero[filaBase][colBase + 4]).equals(" ")) posicionesLibres.add("A3");
+
+        if (limpiarColor(tablero[filaBase + 2][colBase]).equals(" ")) posicionesLibres.add("B1");
+        if (limpiarColor(tablero[filaBase + 2][colBase + 2]).equals(" ")) posicionesLibres.add("B2");
+        if (limpiarColor(tablero[filaBase + 2][colBase + 4]).equals(" ")) posicionesLibres.add("B3");
+
+        if (limpiarColor(tablero[filaBase + 4][colBase]).equals(" ")) posicionesLibres.add("C1");
+        if (limpiarColor(tablero[filaBase + 4][colBase + 2]).equals(" ")) posicionesLibres.add("C2");
+        if (limpiarColor(tablero[filaBase + 4][colBase + 4]).equals(" ")) posicionesLibres.add("C3");
+
+        return posicionesLibres;
+    }
+    
 }
+
