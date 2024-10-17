@@ -193,55 +193,84 @@ public class TableroTateti {
 
     // Método para verificar si un mini cuadrante ha sido ganado por un jugador
     public boolean verificarMiniCuadranteGanado(int cuadranteIndex, String simbolo) {
-        int filaBase = (cuadranteIndex / 3) * 3;
-        int colBase = (cuadranteIndex % 3) * 3;
+        int filaBase = (cuadranteIndex / 3) * 6 + 1;
+        int colBase = (cuadranteIndex % 3) * 6 + 1;
 
+        // Verificar filas del minicuadrante
         for (int i = 0; i < 3; i++) {
-            if (limpiarColor(tablero[filaBase + i][colBase]).equals(simbolo)
-                    && limpiarColor(tablero[filaBase + i][colBase + 1]).equals(simbolo)
-                    && limpiarColor(tablero[filaBase + i][colBase + 2]).equals(simbolo)) {
+            if (simboloIgual(tablero[filaBase + i * 2][colBase], simbolo)
+                    && simboloIgual(tablero[filaBase + i * 2][colBase + 2], simbolo)
+                    && simboloIgual(tablero[filaBase + i * 2][colBase + 4], simbolo)) {
+                pintarCuadranteGanado(filaBase, colBase, simbolo);
                 return true;
             }
         }
 
+        // Verificar columnas del minicuadrante
         for (int j = 0; j < 3; j++) {
-            if (limpiarColor(tablero[filaBase][colBase + j]).equals(simbolo)
-                    && limpiarColor(tablero[filaBase + 1][colBase + j]).equals(simbolo)
-                    && limpiarColor(tablero[filaBase + 2][colBase + j]).equals(simbolo)) {
+            if (simboloIgual(tablero[filaBase][colBase + j * 2], simbolo)
+                    && simboloIgual(tablero[filaBase + 2][colBase + j * 2], simbolo)
+                    && simboloIgual(tablero[filaBase + 4][colBase + j * 2], simbolo)) {
+                pintarCuadranteGanado(filaBase, colBase, simbolo);
                 return true;
             }
         }
 
-        if (limpiarColor(tablero[filaBase][colBase]).equals(simbolo)
-                && limpiarColor(tablero[filaBase + 1][colBase + 1]).equals(simbolo)
-                && limpiarColor(tablero[filaBase + 2][colBase + 2]).equals(simbolo)) {
+        // Verificar diagonales del minicuadrante
+        if (simboloIgual(tablero[filaBase][colBase], simbolo)
+                && simboloIgual(tablero[filaBase + 2][colBase + 2], simbolo)
+                && simboloIgual(tablero[filaBase + 4][colBase + 4], simbolo)) {
+            pintarCuadranteGanado(filaBase, colBase, simbolo);
             return true;
         }
 
-        if (limpiarColor(tablero[filaBase][colBase + 2]).equals(simbolo)
-                && limpiarColor(tablero[filaBase + 1][colBase + 1]).equals(simbolo)
-                && limpiarColor(tablero[filaBase + 2][colBase]).equals(simbolo)) {
+        if (simboloIgual(tablero[filaBase][colBase + 4], simbolo)
+                && simboloIgual(tablero[filaBase + 2][colBase + 2], simbolo)
+                && simboloIgual(tablero[filaBase + 4][colBase], simbolo)) {
+            pintarCuadranteGanado(filaBase, colBase, simbolo);
             return true;
         }
 
         return false;
     }
 
-    // Método para marcar el cuadrante ganado y pintar las posiciones existentes
-    public void marcarCuadranteGanado(int cuadranteIndex, String simbolo) {
-        int filaBase = (cuadranteIndex / 3) * 3;
-        int colBase = (cuadranteIndex % 3) * 3;
-        String colorGanador = simbolo.equals("X") ? "\u001B[31m" : "\u001B[34m";
+    // Método auxiliar para comparar símbolos ignorando el color
+    private boolean simboloIgual(String valor, String simbolo) {
+        return limpiarColor(valor).equals(simbolo);
+    }
 
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                tablero[filaBase + i][colBase + j] = colorGanador + limpiarColor(tablero[filaBase + i][colBase + j]) + "\u001B[0m";
+    // Método para pintar todo el minicuadrante con el color del ganador
+    private void pintarCuadranteGanado(int filaBase, int colBase, String simbolo) {
+        String color = simbolo.equals("X") ? "\u001B[31m" : "\u001B[34m"; // Rojo para X, Azul para O
+
+        // Recorrer todas las posiciones del minicuadrante, excluyendo la última fila y columna de separación
+        for (int i = 0; i < 5; i++) { // 5 filas (sin incluir la última fila de separación)
+            for (int j = 0; j < 5; j++) { // 5 columnas (sin incluir la última columna de separación)
+                // Aplicar color al contenido de la celda, limpiando cualquier color previo
+                tablero[filaBase + i][colBase + j]
+                        = color + limpiarColor(tablero[filaBase + i][colBase + j]) + "\u001B[0m";
             }
         }
-
-        // Guardar que el mini cuadrante ha sido ganado
-        miniCuadrantesGanados[cuadranteIndex] = simbolo.equals("X") ? 1 : 2;
     }
+
+    // // Método para marcar el cuadrante ganado y pintar las posiciones existentes
+    // public void marcarCuadranteGanado(int cuadranteIndex, String simbolo) {
+    //     int filaBase = (cuadranteIndex / 3) * 3;
+    //     int colBase = (cuadranteIndex % 3) * 3;
+    //     String colorGanador = simbolo.equals("X") ? "\u001B[31m" : "\u001B[34m";
+    //     for (int i = 0; i < 3; i++) {
+    //         for (int j = 0; j < 3; j++) {
+    //             tablero[filaBase + i][colBase + j] = colorGanador + limpiarColor(tablero[filaBase + i][colBase + j]) + "\u001B[0m";
+    //         }
+    //     }
+    //     // Guardar que el mini cuadrante ha sido ganado
+    //     miniCuadrantesGanados[cuadranteIndex] = simbolo.equals("X") ? 1 : 2;
+    // }
+    public boolean estaCuadranteGanado(int cuadranteIndex) {
+        // Revisa si el minicuadrante está ganado por X (1) o por O (2)
+        return miniCuadrantesGanados[cuadranteIndex] != 0;
+    }
+
 
     // Método para verificar si todo el tablero ha sido completado
     public boolean tableroCompleto() {
