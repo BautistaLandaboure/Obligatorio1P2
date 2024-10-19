@@ -1,5 +1,7 @@
 package obligatorio1;
 
+import java.util.ArrayList;
+
 public class TableroTateti {
 
     private String[][] tablero;
@@ -255,19 +257,19 @@ public class TableroTateti {
         }
     }
 
-    // // Método para marcar el cuadrante ganado y pintar las posiciones existentes
-    // public void marcarCuadranteGanado(int cuadranteIndex, String simbolo) {
-    //     int filaBase = (cuadranteIndex / 3) * 3;
-    //     int colBase = (cuadranteIndex % 3) * 3;
-    //     String colorGanador = simbolo.equals("X") ? "\u001B[31m" : "\u001B[34m";
-    //     for (int i = 0; i < 3; i++) {
-    //         for (int j = 0; j < 3; j++) {
-    //             tablero[filaBase + i][colBase + j] = colorGanador + limpiarColor(tablero[filaBase + i][colBase + j]) + "\u001B[0m";
-    //         }
-    //     }
-    //     // Guardar que el mini cuadrante ha sido ganado
-    //     miniCuadrantesGanados[cuadranteIndex] = simbolo.equals("X") ? 1 : 2;
-    // }
+    
+     public void marcarCuadranteGanado(int cuadranteIndex, String simbolo) {
+         int filaBase = (cuadranteIndex / 3) * 3;
+         int colBase = (cuadranteIndex % 3) * 3;
+         String colorGanador = simbolo.equals("X") ? "\u001B[31m" : "\u001B[34m";
+         for (int i = 0; i < 3; i++) {
+             for (int j = 0; j < 3; j++) {
+                 tablero[filaBase + i][colBase + j] = colorGanador + limpiarColor(tablero[filaBase + i][colBase + j]) + "\u001B[0m";
+             }
+         }
+         // Guardar que el mini cuadrante ha sido ganado
+         miniCuadrantesGanados[cuadranteIndex] = simbolo.equals("X") ? 1 : 2;
+     }
     public boolean estaCuadranteGanado(int cuadranteIndex) {
         // Revisa si el minicuadrante está ganado por X (1) o por O (2)
         return miniCuadrantesGanados[cuadranteIndex] != 0;
@@ -351,5 +353,41 @@ public class TableroTateti {
             }
         }
     }
+    
+    
+    public ArrayList<Integer> obtenerCuadrantesLibres() {
+        ArrayList<Integer> cuadrantesLibres = new ArrayList<>();
+       
+        for (int i = 0; i < miniCuadrantesGanados.length; i++) {
+            if (miniCuadrantesGanados[i] == 0 && !estaCuadranteCompleto(i)) {
+                cuadrantesLibres.add(i);
+            }
+        }
+        return cuadrantesLibres;
+    }
+    public ArrayList<String> obtenerPosicionesLibresEnCuadrante(int cuadranteIndex) {
+        ArrayList<String> posicionesLibres = new ArrayList<>(); 
+        // Coordenadas base del cuadrante (calcula su posición en el tablero principal)
+        int filaBase = (cuadranteIndex / 3) * 6 + 1;
+        int colBase = (cuadranteIndex % 3) * 6 + 1;
+
+        // Revisar cada posición en el cuadrante 
+        if (limpiarColor(tablero[filaBase][colBase]).equals(" ")) posicionesLibres.add("A1");
+        if (limpiarColor(tablero[filaBase][colBase + 2]).equals(" ")) posicionesLibres.add("A2");
+        if (limpiarColor(tablero[filaBase][colBase + 4]).equals(" ")) posicionesLibres.add("A3");
+        if (limpiarColor(tablero[filaBase + 2][colBase]).equals(" ")) posicionesLibres.add("B1");
+        if (limpiarColor(tablero[filaBase + 2][colBase + 2]).equals(" ")) posicionesLibres.add("B2");
+        if (limpiarColor(tablero[filaBase + 2][colBase + 4]).equals(" ")) posicionesLibres.add("B3");
+        if (limpiarColor(tablero[filaBase + 4][colBase]).equals(" ")) posicionesLibres.add("C1");
+        if (limpiarColor(tablero[filaBase + 4][colBase + 2]).equals(" ")) posicionesLibres.add("C2");
+        if (limpiarColor(tablero[filaBase + 4][colBase + 4]).equals(" ")) posicionesLibres.add("C3");
+        return posicionesLibres;
+    }
+    
+    
+    
+    
+    
+    
 
 }
