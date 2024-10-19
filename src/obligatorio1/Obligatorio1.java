@@ -136,6 +136,13 @@ public class Obligatorio1 {
         boolean partidaActiva = true;
 
         while (partidaActiva) {
+            if (tableroTateti.tableroCompleto() && !tableroTateti.verificarJuegoGanado("X")
+                    && !tableroTateti.verificarJuegoGanado("O")) {
+                System.out.println("El juego ha terminado en empate. No hay más movimientos posibles.");
+                partidaActiva = false;
+                continue;
+            }
+
             String cuadranteElegido;
 
             if (siguienteCuadrante == -1) {
@@ -196,7 +203,10 @@ public class Obligatorio1 {
                     }
                 } else {
                     int nuevoCuadrante = obtenerCuadranteIndexDesdePosicion(posicionElegida);
+                    System.out.println("nuevoCuadrante" + nuevoCuadrante);
+                    System.out.println("tableroTateti.estaCuadranteGanado(nuevoCuadrante)" + tableroTateti.estaCuadranteGanado(nuevoCuadrante));
                     if (!tableroTateti.estaCuadranteGanado(nuevoCuadrante)) {
+                        System.err.println("El cuadrante " + indexACuadranteLabel(nuevoCuadrante) + " ya ha sido ganado. Elige otro cuadrante.");
                         siguienteCuadrante = nuevoCuadrante;
                     }
                 }

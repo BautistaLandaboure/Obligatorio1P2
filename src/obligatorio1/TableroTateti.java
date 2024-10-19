@@ -124,6 +124,10 @@ public class TableroTateti {
     public boolean jugarEnCuadrante(int cuadranteIndex, String posicion, String simbolo) {
         int fila, columna;
 
+        if (estaCuadranteCompleto(cuadranteIndex)) {
+            System.out.println("Este cuadrante ya está completo. No se puede jugar aquí.");
+            return false;
+        }
         // Mapeo correcto de posiciones A1, B2, etc.
         switch (posicion) {
             case "A1" -> {
@@ -241,6 +245,19 @@ public class TableroTateti {
         return limpiarColor(valor).equals(simbolo);
     }
 
+    // public boolean estaCuadranteCompleto(int cuadranteIndex) {
+    //     for (int fila = 0; fila < 3; fila++) {
+    //         for (int col = 0; col < 3; col++) {
+    //             int filaTablero = (cuadranteIndex / 3) * 6 + 1 + fila * 2;
+    //             int columnaTablero = (cuadranteIndex % 3) * 6 + 1 + col * 2;
+    //             if (limpiarColor(tablero[filaTablero][columnaTablero]).equals(" ")) {
+    //                 return false; // Hay al menos una posición libre
+    //             }
+    //         }
+    //     }
+    //     return true; // Todas las posiciones están ocupadas
+    // }
+
     // Método para pintar todo el minicuadrante con el color del ganador
     private void pintarCuadranteGanado(int filaBase, int colBase, String simbolo) {
         String color = simbolo.equals("X") ? "\u001B[31m" : "\u001B[34m"; // Rojo para X, Azul para O
@@ -277,10 +294,12 @@ public class TableroTateti {
     // Método para verificar si todo el tablero ha sido completado
     public boolean tableroCompleto() {
         for (int i = 0; i < 9; i++) {
+            System.out.println("miniCuadrantesGanados" + miniCuadrantesGanados[i]);
             if (miniCuadrantesGanados[i] == 0) {
                 return false;
             }
         }
+        System.out.println("Tablero completo");
         return true;
     }
 
@@ -323,18 +342,41 @@ public class TableroTateti {
         return false;
     }
 
+    // public boolean estaCuadranteCompleto(int cuadranteIndex) {
+    //     for (int fila = 0; fila < 3; fila++) {
+    //         for (int col = 0; col < 3; col++) {
+    //             int filaTablero = (cuadranteIndex / 3) * 3 + fila;
+    //             int columnaTablero = (cuadranteIndex % 3) * 3 + col;
+    //             if (tablero[filaTablero][columnaTablero].equals(" ")) {
+    //                 return false; // Hay al menos una posición libre
+    //             }
+    //         }
+    //     }
+    //     return true; // Todas las posiciones están ocupadas
+    // }
+
     public boolean estaCuadranteCompleto(int cuadranteIndex) {
+        // Calcular la fila y columna de inicio del mini cuadrante dentro del tablero principal
+        int filaInicio = (cuadranteIndex / 3) * 6 + 1;
+        System.out.println("filaInicio: " + filaInicio);
+        int columnaInicio = (cuadranteIndex % 3) * 6 + 1;
+        System.out.println("columnaInicio: " + columnaInicio);
+        // Recorrer las posiciones del mini cuadrante
         for (int fila = 0; fila < 3; fila++) {
             for (int col = 0; col < 3; col++) {
-                int filaTablero = (cuadranteIndex / 3) * 3 + fila;
-                int columnaTablero = (cuadranteIndex % 3) * 3 + col;
-                if (tablero[filaTablero][columnaTablero].equals(" ")) {
+                int filaTablero = filaInicio + fila * 2;
+
+                int columnaTablero = columnaInicio + col * 2;
+                System.out.println("posicionesss: " + tablero[filaTablero][columnaTablero]);
+                // Verificar si alguna posición sigue libre
+                if (limpiarColor(tablero[filaTablero][columnaTablero]).equals(" ")) {
                     return false; // Hay al menos una posición libre
                 }
             }
         }
         return true; // Todas las posiciones están ocupadas
     }
+
 
     // Función auxiliar para limpiar los colores del símbolo antes de compararlo
     private String limpiarColor(String valor) {
