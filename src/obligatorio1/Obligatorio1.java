@@ -185,29 +185,26 @@ public class Obligatorio1 {
                         partidaActiva = false;
                         continue;
                     }
-                    System.out.println("cuadranteIndex" + cuadranteIndex);
-                    System.out.println("siguienteCuadrante" + siguienteCuadrante);
+                    System.out.println("posicionElegida" + posicionElegida);
+                    System.out.println("cuadranteElegido" + cuadranteElegido);
+                    System.out.println("obtenerCuadranteIndexDesdePosicion(posicionElegida)" + obtenerCuadranteIndexDesdePosicion(posicionElegida));
 
-                    // Permitir elegir cualquier cuadrante SOLO si la jugada final fue en el cuadrante activo
-                    if (cuadranteIndex == siguienteCuadrante) {
-                        siguienteCuadrante = -1;  // Liberar la elección de cuadrante
-                        System.out.println("Has ganado en el mismo cuadrante. El próximo jugador puede elegir cualquier cuadrante.");
+                    if (posicionElegida.equals(cuadranteElegido)) {
+                        siguienteCuadrante = -1; // Permitir al próximo jugador elegir cualquier cuadrante
                     } else {
-                        // Si se ganó otro cuadrante, no cambiar la lógica
-                        siguienteCuadrante = cuadranteIndex;
+                        siguienteCuadrante = obtenerCuadranteIndexDesdePosicion(posicionElegida); // Permitir al próximo jugador elegir cualquier cuadrante
                     }
                 } else {
-                    // Determinar el siguiente cuadrante basado en la posición elegida
                     int nuevoCuadrante = obtenerCuadranteIndexDesdePosicion(posicionElegida);
-
                     if (!tableroTateti.estaCuadranteGanado(nuevoCuadrante)) {
                         siguienteCuadrante = nuevoCuadrante;
-                    } else {
-                        System.out.println("El cuadrante " + indexACuadranteLabel(nuevoCuadrante) + " ya fue ganado.");
-                        System.out.println("Debes seguir jugando en el mismo cuadrante.");
-                        siguienteCuadrante = cuadranteIndex;  // Mantener el jugador en el mismo cuadrante
                     }
                 }
+
+                // Resaltar el siguiente cuadrante para la próxima jugada
+                String cuadranteLabel = indexACuadranteLabel(siguienteCuadrante);
+                tableroTateti.mostrarTablero(cuadranteLabel);
+
 
                 // Cambiar de jugador
                 jugadorActual = jugadorActual.equals("X") ? "O" : "X";

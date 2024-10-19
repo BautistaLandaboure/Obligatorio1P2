@@ -101,25 +101,14 @@ public class TableroTateti {
     }
 
     private void resaltarCuadrante(String[][] tablero, String cuadranteSeleccionado) {
-
-        // convertir el nombre del cuadrante a índices
         int filaCuadrante = cuadranteSeleccionado.charAt(0) - 'A'; // 'A' -> 0, 'B' -> 1, 'C' -> 2
         int colCuadrante = cuadranteSeleccionado.charAt(1) - '1'; // '1' -> 0, '2' -> 1, '3' -> 2
 
-        // Calcular las posiciones de inicio y fin del cuadrante seleccionado
         int filaInicio = filaCuadrante * 6;
-        int filaFin = filaInicio + 6;
+        int filaFin = Math.min(filaInicio + 6, 18); // Asegurar que no excede el límite
 
         int colInicio = colCuadrante * 6;
-        int colFin = colInicio + 6;
-
-        // Ajustes adicionales para los bordes derecho e inferior
-        if (colCuadrante == 2 && colFin < 18) { // A3, B3, C3 (extiende el borde derecho si está dentro del límite)
-            colFin++;
-        }
-        if (filaCuadrante == 2 && filaFin < 18) { // C1, C2, C3 (extiende el borde inferior si está dentro del límite)
-            filaFin++;
-        }
+        int colFin = Math.min(colInicio + 6, 18); // Asegurar que no excede el límite
 
         // Aplicar color amarillo al perímetro del cuadrante seleccionado
         for (int i = filaInicio; i <= filaFin; i++) {
@@ -130,6 +119,7 @@ public class TableroTateti {
             }
         }
     }
+
 
     public boolean jugarEnCuadrante(int cuadranteIndex, String posicion, String simbolo) {
         int fila, columna;
@@ -196,34 +186,37 @@ public class TableroTateti {
         int filaBase = (cuadranteIndex / 3) * 6 + 1;
         int colBase = (cuadranteIndex % 3) * 6 + 1;
 
-        // Verificar filas del mini cuadrante
+        // Verificar filas
         for (int i = 0; i < 3; i++) {
             if (simboloIgual(tablero[filaBase + i * 2][colBase], simbolo)
                     && simboloIgual(tablero[filaBase + i * 2][colBase + 2], simbolo)
                     && simboloIgual(tablero[filaBase + i * 2][colBase + 4], simbolo)) {
                 actualizarMiniCuadranteGanado(cuadranteIndex, simbolo);
                 pintarCuadranteGanado(filaBase, colBase, simbolo);
+                mostrarTablero(""); // Refrescar tablero
                 return true;
             }
         }
 
-        // Verificar columnas del mini cuadrante
+        // Verificar columnas
         for (int j = 0; j < 3; j++) {
             if (simboloIgual(tablero[filaBase][colBase + j * 2], simbolo)
                     && simboloIgual(tablero[filaBase + 2][colBase + j * 2], simbolo)
                     && simboloIgual(tablero[filaBase + 4][colBase + j * 2], simbolo)) {
                 actualizarMiniCuadranteGanado(cuadranteIndex, simbolo);
                 pintarCuadranteGanado(filaBase, colBase, simbolo);
+                mostrarTablero(""); // Refrescar tablero
                 return true;
             }
         }
 
-        // Verificar diagonales del mini cuadrante
+        // Verificar diagonales
         if (simboloIgual(tablero[filaBase][colBase], simbolo)
                 && simboloIgual(tablero[filaBase + 2][colBase + 2], simbolo)
                 && simboloIgual(tablero[filaBase + 4][colBase + 4], simbolo)) {
             actualizarMiniCuadranteGanado(cuadranteIndex, simbolo);
             pintarCuadranteGanado(filaBase, colBase, simbolo);
+            mostrarTablero(""); // Refrescar tablero
             return true;
         }
 
@@ -232,6 +225,7 @@ public class TableroTateti {
                 && simboloIgual(tablero[filaBase + 4][colBase], simbolo)) {
             actualizarMiniCuadranteGanado(cuadranteIndex, simbolo);
             pintarCuadranteGanado(filaBase, colBase, simbolo);
+            mostrarTablero(""); // Refrescar tablero
             return true;
         }
 
