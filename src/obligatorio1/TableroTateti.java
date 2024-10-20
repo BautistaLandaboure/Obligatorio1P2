@@ -92,21 +92,25 @@ public class TableroTateti {
         }
     }
 
-
-
     public boolean jugarEnCuadrante(int cuadranteIndex, String posicion, String simbolo) {
         int filaBase = (cuadranteIndex / 3) * 6 + 1;
         int colBase = (cuadranteIndex % 3) * 6 + 1;
 
         int[] coords = obtenerCoordenadasPosicion(posicion);
-        if (coords == null)
+        if (coords == null) {
             return false;
+        }
 
         int fila = filaBase + coords[0] * 2;
         int col = colBase + coords[1] * 2;
 
         if (limpiarColor(tablero[fila][col]).equals(" ")) {
             tablero[fila][col] = simbolo.equals("X") ? "\u001B[31mX\u001B[0m" : "\u001B[34mO\u001B[0m";
+
+            if (verificarMiniCuadranteGanado(cuadranteIndex, simbolo)) {
+                System.out.println("¡Mini cuadrante ganado por " + simbolo + "!");
+            }
+
             return true;
         }
         return false;
@@ -150,49 +154,40 @@ public class TableroTateti {
         int filaBase = (cuadranteIndex / 3) * 6 + 1;
         int colBase = (cuadranteIndex % 3) * 6 + 1;
 
-        boolean filaGanada, columnaGanada;
-        boolean diagPrincipalGanada = true, diagSecundariaGanada = true;
+        // Definimos las posiciones relativas de filas, columnas y diagonales
+        int[][] lineas = {
+            {0, 0, 0, 2, 0, 4},
+            {2, 0, 2, 2, 2, 4},
+            {4, 0, 4, 2, 4, 4},
+            {0, 0, 2, 0, 4, 0},
+            {0, 2, 2, 2, 4, 2},
+            {0, 4, 2, 4, 4, 4},
+            {0, 0, 2, 2, 4, 4},
+            {0, 4, 2, 2, 4, 0}
+        };
 
-        // Usamos un solo bucle para verificar filas, columnas y diagonales
-        for (int i = 0; i < 3; i++) {
-            // Verificar fila i
-            filaGanada = simboloIgual(tablero[filaBase + i * 2][colBase], simbolo)
-                    && simboloIgual(tablero[filaBase + i * 2][colBase + 2], simbolo)
-                    && simboloIgual(tablero[filaBase + i * 2][colBase + 4], simbolo);
-
-            // Verificar columna i
-            columnaGanada = simboloIgual(tablero[filaBase][colBase + i * 2], simbolo)
-                    && simboloIgual(tablero[filaBase + 2][colBase + i * 2], simbolo)
-                    && simboloIgual(tablero[filaBase + 4][colBase + i * 2], simbolo);
-
-            // Si encontramos una fila o columna ganada, terminamos
-            if (filaGanada || columnaGanada) {
-                actualizarMiniCuadranteGanado(cuadranteIndex, simbolo);
-                pintarCuadranteGanado(filaBase, colBase, simbolo);
+        for (int[] linea : lineas) {
+            if (esLineaGanadora(filaBase, colBase, linea, simbolo)) {
+                marcarCuadranteGanado(cuadranteIndex, simbolo);
                 return true;
             }
-
-            // Verificar las diagonales (solo en la primera iteración)
-            if (i == 0) {
-                diagPrincipalGanada = simboloIgual(tablero[filaBase][colBase], simbolo)
-                        && simboloIgual(tablero[filaBase + 2][colBase + 2], simbolo)
-                        && simboloIgual(tablero[filaBase + 4][colBase + 4], simbolo);
-
-                diagSecundariaGanada = simboloIgual(tablero[filaBase][colBase + 4], simbolo)
-                        && simboloIgual(tablero[filaBase + 2][colBase + 2], simbolo)
-                        && simboloIgual(tablero[filaBase + 4][colBase], simbolo);
-            }
         }
-
-        // Si se ganó alguna diagonal, marcamos el cuadrante como ganado
-        if (diagPrincipalGanada || diagSecundariaGanada) {
-            actualizarMiniCuadranteGanado(cuadranteIndex, simbolo);
-            pintarCuadranteGanado(filaBase, colBase, simbolo);
-            return true;
-        }
-
-        return false;  // No se ganó el mini cuadrante
+        return false;
     }
+
+    private boolean esLineaGanadora(int filaBase, int colBase, int[] linea, String simbolo) {
+        return simboloIgual(tablero[filaBase + linea[0]][colBase + linea[1]], simbolo)
+                && simboloIgual(tablero[filaBase + linea[2]][colBase + linea[3]], simbolo)
+                && simboloIgual(tablero[filaBase + linea[4]][colBase + linea[5]], simbolo);
+    }
+
+    private void marcarCuadranteGanado(int cuadranteIndex, String simbolo) {
+        actualizarMiniCuadranteGanado(cuadranteIndex, simbolo);
+        int filaBase = (cuadranteIndex / 3) * 6 + 1;
+        int colBase = (cuadranteIndex % 3) * 6 + 1;
+        pintarCuadranteGanado(filaBase, colBase, simbolo);
+    }
+
 
 
     private boolean simboloIgual(String valor, String simbolo) {
