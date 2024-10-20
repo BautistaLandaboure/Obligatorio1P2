@@ -8,7 +8,12 @@ public class TableroTateti {
 
     private final String[][] tablero;
     private final int[] miniCuadrantesGanados;
-    private String ultimoCuadranteSeleccionado = "";  // Para rastrear el último cuadrante seleccionado
+    private String ultimoCuadranteSeleccionado = "";
+    private static final String COLOR_VERDE = "\u001B[42m";
+    private static final String COLOR_AMARILLO = "\u001B[43m";
+    private static final String COLOR_ROJO = "\u001B[31m";
+    private static final String COLOR_AZUL = "\u001B[34m";
+    private static final String RESET_COLOR = "\u001B[0m";
 
     // Etiquetas de los cuadrantes
     private static final List<String> cuadranteLabels = Arrays.asList(
@@ -52,41 +57,35 @@ public class TableroTateti {
                     continue;
 
                 if (i == 0 || i == tamano - 1 || j == 0 || j == tamano - 1) {
-                    tablero[i][j] = "\u001B[42m*\u001B[0m";
+                    tablero[i][j] = COLOR_VERDE + "*" + RESET_COLOR;
                 } else if (i % 6 == 0 || j % 6 == 0) {
-                    tablero[i][j] = "\u001B[42m*\u001B[0m";
+                    tablero[i][j] = COLOR_VERDE + "*" + RESET_COLOR;
                 } else if (i % 2 == 0 && j % 2 == 0) {
-                    tablero[i][j] = "+";  // Intersecciones dentro del cuadrante
+                    tablero[i][j] = "+";
                 } else if (i % 2 == 0) {
-                    tablero[i][j] = "-";  // Relleno horizontal
+                    tablero[i][j] = "-";
                 } else if (j % 2 == 0) {
-                    tablero[i][j] = "|";  // Relleno vertical
+                    tablero[i][j] = "|";
                 } else {
-                    tablero[i][j] = " ";  // Espacio vacío
+                    tablero[i][j] = " ";
                 }
             }
         }
     }
 
     public void resaltarCuadrante(String cuadranteSeleccionado) {
-        // Limpia el resalte anterior si existe
         if (!ultimoCuadranteSeleccionado.isEmpty()) {
             limpiarResaltado(ultimoCuadranteSeleccionado);
         }
 
-        // Guardamos el cuadrante seleccionado como el último
         ultimoCuadranteSeleccionado = cuadranteSeleccionado;
-
-        // Cálculo del inicio del cuadrante
         int filaInicio = (cuadranteSeleccionado.charAt(0) - 'A') * 6;
         int colInicio = (cuadranteSeleccionado.charAt(1) - '1') * 6;
 
-        // Ajustamos el área de resalte para que no sobresalga
         for (int i = filaInicio; i <= filaInicio + 6; i++) {
             for (int j = colInicio; j <= colInicio + 6; j++) {
-                // Resaltar solo el borde exterior
                 if (i == filaInicio || i == filaInicio + 6 || j == colInicio || j == colInicio + 6) {
-                    tablero[i][j] = "\u001B[43m*\u001B[0m";  // Amarillo
+                    tablero[i][j] = COLOR_AMARILLO + "*" + RESET_COLOR;
                 }
             }
         }
@@ -105,7 +104,8 @@ public class TableroTateti {
         int col = colBase + coords[1] * 2;
 
         if (limpiarColor(tablero[fila][col]).equals(" ")) {
-            tablero[fila][col] = simbolo.equals("X") ? "\u001B[31mX\u001B[0m" : "\u001B[34mO\u001B[0m";
+            String colorSimbolo = simbolo.equals("X") ? COLOR_ROJO : COLOR_AZUL;
+            tablero[fila][col] = colorSimbolo + simbolo + RESET_COLOR;
 
             if (verificarMiniCuadranteGanado(cuadranteIndex, simbolo)) {
                 System.out.println("¡Mini cuadrante ganado por " + simbolo + "!");
@@ -116,30 +116,25 @@ public class TableroTateti {
         return false;
     }
 
+
     private int[] obtenerCoordenadasPosicion(String posicion) {
-        return switch (posicion) {
-            case "A1" ->
-                new int[]{0, 0};
-            case "A2" ->
-                new int[]{0, 1};
-            case "A3" ->
-                new int[]{0, 2};
-            case "B1" ->
-                new int[]{1, 0};
-            case "B2" ->
-                new int[]{1, 1};
-            case "B3" ->
-                new int[]{1, 2};
-            case "C1" ->
-                new int[]{2, 0};
-            case "C2" ->
-                new int[]{2, 1};
-            case "C3" ->
-                new int[]{2, 2};
-            default ->
-                null;
-        };
+        if (posicion.length() != 2) {
+            return null;  // verifica que la posición tenga el formato correcto
+        }
+        char fila = posicion.charAt(0);
+        char columna = posicion.charAt(1);
+
+        if (fila < 'A' || fila > 'C' || columna < '1' || columna > '3') {
+            return null;
+        }
+
+        // convertimos 'A'-'C' en 0-2 y '1'-'3' en 0-2
+        int filaIndex = fila - 'A';
+        int columnaIndex = columna - '1';
+
+        return new int[]{filaIndex, columnaIndex};
     }
+
 
     public int obtenerIndiceCuadrante(String label) {
         return cuadranteLabels.indexOf(label);
@@ -149,12 +144,19 @@ public class TableroTateti {
         return (index >= 0 && index < cuadranteLabels.size()) ? cuadranteLabels.get(index) : "Invalid";
     }
 
+    public void limpiarTodoResaltado() {
+        for (String label : cuadranteLabels) {
+            limpiarResaltado(label);
+        }
+    }
+
+
     public boolean verificarMiniCuadranteGanado(int cuadranteIndex, String simbolo) {
-        // Coordenadas base del cuadrante
+        // coordenadas base del cuadrante
         int filaBase = (cuadranteIndex / 3) * 6 + 1;
         int colBase = (cuadranteIndex % 3) * 6 + 1;
 
-        // Definimos las posiciones relativas de filas, columnas y diagonales
+        // definimos las posiciones relativas de filas, columnas y diagonales
         int[][] lineas = {
             {0, 0, 0, 2, 0, 4},
             {2, 0, 2, 2, 2, 4},
@@ -188,29 +190,27 @@ public class TableroTateti {
         pintarCuadranteGanado(filaBase, colBase, simbolo);
     }
 
-
-
     private boolean simboloIgual(String valor, String simbolo) {
         return limpiarColor(valor).equals(simbolo);
     }
 
     private void pintarCuadranteGanado(int filaBase, int colBase, String simbolo) {
-        String color = simbolo.equals("X") ? "\u001B[31m" : "\u001B[34m";  // Rojo para X, Azul para O
+        String color = simbolo.equals("X") ? COLOR_ROJO : COLOR_AZUL;
 
-        for (int i = 0; i < 5; i++) {  // Excluye la última fila de separación
-            for (int j = 0; j < 5; j++) {  // Excluye la última columna de separación
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
                 tablero[filaBase + i][colBase + j]
-                        = color + limpiarColor(tablero[filaBase + i][colBase + j]) + "\u001B[0m";
+                        = color + limpiarColor(tablero[filaBase + i][colBase + j]) + RESET_COLOR;
             }
         }
     }
-    
+
     private void actualizarMiniCuadranteGanado(int cuadranteIndex, String simbolo) {
         miniCuadrantesGanados[cuadranteIndex] = simbolo.equals("X") ? 1 : 2;
     }
 
     public boolean estaCuadranteGanado(int cuadranteIndex) {
-        // Si el valor es distinto de 0, significa que el cuadrante fue ganado.
+        // si el valor es distinto de 0, significa que el cuadrante fue ganado
         return miniCuadrantesGanados[cuadranteIndex] != 0;
     }
 
@@ -218,36 +218,24 @@ public class TableroTateti {
     public boolean verificarJuegoGanado(String simbolo) {
         int valorSimbolo = simbolo.equals("X") ? 1 : 2;
 
-        for (int i = 0; i < 3; i++) {
-            if (miniCuadrantesGanados[i * 3] == valorSimbolo
-                    && miniCuadrantesGanados[i * 3 + 1] == valorSimbolo
-                    && miniCuadrantesGanados[i * 3 + 2] == valorSimbolo) {
+        int[][] lineasGanadoras = {
+            {0, 1, 2}, {3, 4, 5}, {6, 7, 8},
+            {0, 3, 6}, {1, 4, 7}, {2, 5, 8},
+            {0, 4, 8}, {2, 4, 6}
+        };
+
+        // Verificar cada combinación ganadora
+        for (int[] linea : lineasGanadoras) {
+            if (miniCuadrantesGanados[linea[0]] == valorSimbolo
+                    && miniCuadrantesGanados[linea[1]] == valorSimbolo
+                    && miniCuadrantesGanados[linea[2]] == valorSimbolo) {
                 return true;
             }
-        }
-
-        for (int j = 0; j < 3; j++) {
-            if (miniCuadrantesGanados[j] == valorSimbolo
-                    && miniCuadrantesGanados[j + 3] == valorSimbolo
-                    && miniCuadrantesGanados[j + 6] == valorSimbolo) {
-                return true;
-            }
-        }
-
-        if (miniCuadrantesGanados[0] == valorSimbolo
-                && miniCuadrantesGanados[4] == valorSimbolo
-                && miniCuadrantesGanados[8] == valorSimbolo) {
-            return true;
-        }
-
-        if (miniCuadrantesGanados[2] == valorSimbolo
-                && miniCuadrantesGanados[4] == valorSimbolo
-                && miniCuadrantesGanados[6] == valorSimbolo) {
-            return true;
         }
 
         return false;
     }
+
 
     private String limpiarColor(String valor) {
         return valor.replaceAll("\\u001B\\[[;\\d]*m", "");
@@ -263,23 +251,19 @@ public class TableroTateti {
     }
 
     public boolean estaCuadranteCompleto(int cuadranteIndex) {
-        // Calcular la fila y columna de inicio del cuadrante en el tablero principal
         int filaInicio = (cuadranteIndex / 3) * 6 + 1;
         int colInicio = (cuadranteIndex % 3) * 6 + 1;
 
-        // Revisar cada posición dentro del cuadrante
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 int filaTablero = filaInicio + i * 2;
                 int colTablero = colInicio + j * 2;
 
-                // Si hay una posición vacía, el cuadrante no está completo
                 if (limpiarColor(tablero[filaTablero][colTablero]).equals(" ")) {
                     return false;
                 }
             }
         }
-        // Si no hay posiciones vacías, el cuadrante está completo
         return true;
     }
 
@@ -287,11 +271,10 @@ public class TableroTateti {
         int filaInicio = (cuadrante.charAt(0) - 'A') * 6;
         int colInicio = (cuadrante.charAt(1) - '1') * 6;
 
-        // Restaurar el borde original a verde
         for (int i = filaInicio; i <= filaInicio + 6; i++) {
             for (int j = colInicio; j <= colInicio + 6; j++) {
                 if (i == filaInicio || i == filaInicio + 6 || j == colInicio || j == colInicio + 6) {
-                    tablero[i][j] = "\u001B[42m*\u001B[0m";  // Verde
+                    tablero[i][j] = COLOR_VERDE + "*" + RESET_COLOR;
                 }
             }
         }
@@ -313,29 +296,33 @@ public class TableroTateti {
         int filaBase = (cuadranteIndex / 3) * 6 + 1;
         int colBase = (cuadranteIndex % 3) * 6 + 1;
 
-        // Verificar cada posición en el cuadrante (A1, A2, ..., C3)
-        if (limpiarColor(tablero[filaBase][colBase]).equals(" ")) posicionesLibres.add("A1");
-        if (limpiarColor(tablero[filaBase][colBase + 2]).equals(" ")) posicionesLibres.add("A2");
-        if (limpiarColor(tablero[filaBase][colBase + 4]).equals(" ")) posicionesLibres.add("A3");
-        if (limpiarColor(tablero[filaBase + 2][colBase]).equals(" ")) posicionesLibres.add("B1");
-        if (limpiarColor(tablero[filaBase + 2][colBase + 2]).equals(" ")) posicionesLibres.add("B2");
-        if (limpiarColor(tablero[filaBase + 2][colBase + 4]).equals(" ")) posicionesLibres.add("B3");
-        if (limpiarColor(tablero[filaBase + 4][colBase]).equals(" ")) posicionesLibres.add("C1");
-        if (limpiarColor(tablero[filaBase + 4][colBase + 2]).equals(" ")) posicionesLibres.add("C2");
-        if (limpiarColor(tablero[filaBase + 4][colBase + 4]).equals(" ")) posicionesLibres.add("C3");
+        char[] filas = {'A', 'B', 'C'};
+        char[] columnas = {'1', '2', '3'};
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                int fila = filaBase + i * 2;
+                int columna = colBase + j * 2;
+
+                if (limpiarColor(tablero[fila][columna]).equals(" ")) {
+                    String posicion = "" + filas[i] + columnas[j];  // Ej: "A1", "B2"
+                    posicionesLibres.add(posicion);
+                }
+            }
+        }
 
         return posicionesLibres;
     }
 
+
     public void limpiarMiniCuadrante(String cuadrante) {
         int filaBase = (cuadrante.charAt(0) - 'A') * 6 + 1;
         int colBase = (cuadrante.charAt(1) - '1') * 6 + 1;
-        for (int i = 0; i < 5; i++) {  // Excluye la fila de separación
-            for (int j = 0; j < 5; j++) {  // Excluye la columna de separación
-                tablero[filaBase + i][colBase + j] = " ";  // Limpia la celda
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                tablero[filaBase + i][colBase + j] = " ";
             }
         }
         System.out.println("Mini cuadrante " + cuadrante + " ha sido limpiado.");
     }
-
 }

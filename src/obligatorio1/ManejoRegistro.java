@@ -17,13 +17,13 @@ public class ManejoRegistro {
 
     public boolean registrarUsuario(Usuario nuevoUsuario) {
         if (aliasExiste(nuevoUsuario.getAlias())) {
-            return false;  // Alias ya existe
+            return false;
         }
 
         usuarios.add(nuevoUsuario);
-        return true;  // Usuario registrado con éxito
+        return true;
     }
-    // Método para verificar si el alias ya existe
+
     public boolean aliasExiste(String alias) {
         for (Usuario usuario : usuarios) {
             if (usuario.getAlias().equals(alias)) {

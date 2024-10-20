@@ -11,7 +11,7 @@ public class Obligatorio1 {
         int opcion = 0;
         Scanner in = new Scanner(System.in);
 
-        // mostrarAnimacionBienvenida();
+        mostrarAnimacionBienvenida();
 
         while (opcion != 5) {
             mostrarMenu();
@@ -39,7 +39,7 @@ public class Obligatorio1 {
         for (int i = 0; i < mensaje.length(); i++) {
             System.out.print(mensaje.charAt(i));
             try {
-                Thread.sleep(100);  // wsperar 100 milisegundos entre cada letra
+                Thread.sleep(100);  // esperar 100 milisegundos entre cada letra
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -92,14 +92,14 @@ public class Obligatorio1 {
         int edad = 0;
         boolean edadValida = false;
 
-        // Bucle para validar la edad como un número válido
+        // validamos la edad como un número válido
         while (!edadValida) {
             System.out.print("Ingrese edad: ");
             String entradaEdad = in.nextLine().trim();
 
             try {
                 edad = Integer.parseInt(entradaEdad);
-                if (edad > 0) {  // Verifica que la edad sea positiva
+                if (edad > 0) {
                     edadValida = true;
                 } else {
                     System.out.println("La edad debe ser un número positivo. Intente de nuevo.");
@@ -110,7 +110,7 @@ public class Obligatorio1 {
         }
 
         String alias;
-        // Bucle para validar el alias como no vacío y único
+        //  validamos el alias como no vacío y único
         do {
             System.out.print("Ingrese alias: ");
             alias = in.nextLine().trim();
@@ -122,7 +122,7 @@ public class Obligatorio1 {
             }
         } while (alias.isEmpty() || manejoRegistro.aliasExiste(alias));
 
-        // Crear y registrar al nuevo usuario
+        // crear y registrar al nuevo usuario
         Usuario nuevoUsuario = new Usuario(nombre, edad, alias);
         manejoRegistro.registrarUsuario(nuevoUsuario);
         System.out.println("Jugador registrado: " + alias);
@@ -140,7 +140,7 @@ public class Obligatorio1 {
         Usuario jugador1 = seleccionarJugador(in, "Seleccione el jugador 1: ");
         Usuario jugador2;
 
-        // Asegurarse de que el jugador 2 no sea el mismo que el jugador 1
+        // asegurarse de que el jugador 2 no sea el mismo que el jugador 1
         do {
             jugador2 = seleccionarJugador(in, "Seleccione el jugador 2 (diferente al jugador 1): ");
             if (jugador2.equals(jugador1)) {
@@ -169,23 +169,25 @@ public class Obligatorio1 {
     private static Usuario seleccionarJugador(Scanner in, String mensaje) {
         int index = -1;
         ArrayList<Usuario> usuarios = manejoRegistro.getUsuarios();
+        boolean entradaValida = false;  // Controla la repetición del bucle
 
-        // Repetir hasta recibir un valor válido
-        while (true) {
+        while (!entradaValida) {
             System.out.print(mensaje);
             try {
-                index = in.nextInt() - 1;  // Convertimos a índice (restamos 1)
+                index = in.nextInt() - 1;
                 if (index >= 0 && index < usuarios.size()) {
-                    return usuarios.get(index);
+                    entradaValida = true;
                 } else {
                     System.out.println("Por favor, ingrese un número válido.");
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Entrada no válida. Debe ser un número.");
-                in.nextLine();  // Limpiar el buffer de entrada
+                in.nextLine();
             }
         }
+        return usuarios.get(index);
     }
+
     private static void mostrarJugadores() {
         ArrayList<Usuario> usuarios = manejoRegistro.getUsuarios();
         System.out.println("Jugadores disponibles:");
