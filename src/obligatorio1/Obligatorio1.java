@@ -11,7 +11,7 @@ public class Obligatorio1 {
         int opcion = 0;
         Scanner in = new Scanner(System.in);
 
-        mostrarAnimacionBienvenida();
+        // mostrarAnimacionBienvenida();
 
         while (opcion != 5) {
             mostrarMenu();
@@ -69,7 +69,7 @@ public class Obligatorio1 {
         System.out.println("2. Jugar al Gran Tateti entre 2 personas");
         System.out.println("3. Jugar al Gran Tateti con la computadora");
         System.out.println("4. Ver Ranking");
-        System.out.println("5. Salir");
+        System.out.println("5. Fin");
         System.out.print("Seleccione una opción: ");
     }
 
