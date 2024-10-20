@@ -11,7 +11,7 @@ public class Obligatorio1 {
         int opcion = 0;
         Scanner in = new Scanner(System.in);
 
-        mostrarAnimacionBienvenida();
+        // mostrarAnimacionBienvenida();
 
         while (opcion != 5) {
             mostrarMenu();
@@ -136,10 +136,17 @@ public class Obligatorio1 {
 
         mostrarJugadores();
         Scanner in = new Scanner(System.in);
-        System.out.print("Seleccione el jugador 1: ");
-        Usuario jugador1 = manejoRegistro.getUsuarios().get(in.nextInt() - 1);
-        System.out.print("Seleccione el jugador 2: ");
-        Usuario jugador2 = manejoRegistro.getUsuarios().get(in.nextInt() - 1);
+
+        Usuario jugador1 = seleccionarJugador(in, "Seleccione el jugador 1: ");
+        Usuario jugador2;
+
+        // Asegurarse de que el jugador 2 no sea el mismo que el jugador 1
+        do {
+            jugador2 = seleccionarJugador(in, "Seleccione el jugador 2 (diferente al jugador 1): ");
+            if (jugador2.equals(jugador1)) {
+                System.out.println("No puedes seleccionar al mismo jugador dos veces. Intenta de nuevo.");
+            }
+        } while (jugador2.equals(jugador1));
 
         ManejoJuego.jugarPartida(jugador1, jugador2);
     }
@@ -152,13 +159,33 @@ public class Obligatorio1 {
 
         mostrarJugadores();
         Scanner in = new Scanner(System.in);
-        System.out.print("Seleccione el jugador: ");
-        Usuario jugador = manejoRegistro.getUsuarios().get(in.nextInt() - 1);
 
+        Usuario jugador = seleccionarJugador(in, "Seleccione el jugador: ");
         Usuario computadora = new Usuario("Computadora", 0, "Computadora");
+
         ManejoJuego.jugarPartida(jugador, computadora);
     }
 
+    private static Usuario seleccionarJugador(Scanner in, String mensaje) {
+        int index = -1;
+        ArrayList<Usuario> usuarios = manejoRegistro.getUsuarios();
+
+        // Repetir hasta recibir un valor válido
+        while (true) {
+            System.out.print(mensaje);
+            try {
+                index = in.nextInt() - 1;  // Convertimos a índice (restamos 1)
+                if (index >= 0 && index < usuarios.size()) {
+                    return usuarios.get(index);
+                } else {
+                    System.out.println("Por favor, ingrese un número válido.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada no válida. Debe ser un número.");
+                in.nextLine();  // Limpiar el buffer de entrada
+            }
+        }
+    }
     private static void mostrarJugadores() {
         ArrayList<Usuario> usuarios = manejoRegistro.getUsuarios();
         System.out.println("Jugadores disponibles:");
