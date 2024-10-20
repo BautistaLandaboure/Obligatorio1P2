@@ -59,31 +59,34 @@ public class ManejoJuego {
         Scanner in = new Scanner(System.in);
         int cuadranteIndex;
 
-        // verificar si el siguiente cuadrante es válido para jugar
     if (siguienteCuadrante != -1
-                && !tableroTateti.estaCuadranteGanado(siguienteCuadrante)
-                && !tableroTateti.estaCuadranteCompleto(siguienteCuadrante)) {
+            && !tableroTateti.estaCuadranteGanado(siguienteCuadrante)
+            && !tableroTateti.estaCuadranteCompleto(siguienteCuadrante)) {
         cuadranteIndex = siguienteCuadrante;
     } else {
-        // pedir al jugador que seleccione un cuadrante válido
         cuadranteIndex = obtenerCuadranteValido(jugador, in, esContraComputadora, magiaJugador1, magiaJugador2);
+        }
+
+        if (cuadranteIndex == -2) {
+            return -2;
         }
 
         tableroTateti.resaltarCuadrante(tableroTateti.obtenerLabelCuadrante(cuadranteIndex));
         tableroTateti.mostrarTablero("");
 
-        // procesar la posición dentro del cuadrante seleccionado
         int nuevoCuadrante = registrarJugada(jugador, simbolo, cuadranteIndex, in, magiaJugador1, magiaJugador2, esContraComputadora);
 
-        // si el cuadrante está ganado/completo, pedir al siguiente jugador que elija uno nuevo
+        if (nuevoCuadrante == -2) {
+            return -2;
+        }
+
         if (tableroTateti.estaCuadranteGanado(nuevoCuadrante) || tableroTateti.estaCuadranteCompleto(nuevoCuadrante)) {
             String cuadrante = tableroTateti.obtenerLabelCuadrante(nuevoCuadrante);
-
             tableroTateti.limpiarTodoResaltado();
             tableroTateti.mostrarTablero("");
 
             System.out.println("El cuadrante " + cuadrante + " está ganado o completo.");
-            return -1;  // indica que se debe seleccionar un nuevo cuadrante
+            return -1;
         }
 
         return nuevoCuadrante;
@@ -122,10 +125,10 @@ public class ManejoJuego {
             posicion = obtenerPosicion(jugador, tableroTateti.obtenerLabelCuadrante(cuadranteIndex), in);
 
             if (posicion.equals("X")) {
-                return -2;  // terminar el juego
+                return -2;
             }
             if (posicion.equals("M") && realizarJugadaMagica(jugador, magiaJugador1, magiaJugador2, esContraComputadora)) {
-                return -1;  // permitir seleccionar cualquier cuadrante
+                return -1;
         }
 
         if (tableroTateti.jugarEnCuadrante(cuadranteIndex, posicion, simbolo)) {
@@ -133,8 +136,7 @@ public class ManejoJuego {
         } else {
             System.out.println("Posición no válida. Intenta nuevamente.");
         }
-    }
-        // determinar el siguiente cuadrante basado en la posición jugada
+        }
         return tableroTateti.obtenerIndiceCuadrante(posicion);
     }
 
