@@ -6,6 +6,7 @@ public class Usuario {
     private int edad;
     private String alias;
     private int victorias;
+    private boolean usoJugadaMagica;
 
 // Constructor para crear una instancia de usuario
     public Usuario(String nombre, int edad, String alias) {
@@ -13,6 +14,7 @@ public class Usuario {
         this.edad = edad;
         this.alias = alias;
         this.victorias = 0;
+        this.usoJugadaMagica = false;
     }
 
 // Método para mostrar la información del usuario
@@ -44,6 +46,15 @@ public class Usuario {
     public void setEdad(int edad) {
         this.edad = edad;
     }
+
+    public void setUsoJugadaMagica(boolean usoJugadaMagica) {
+        this.usoJugadaMagica = usoJugadaMagica;
+    }
+
+    public boolean getUsoJugadaMagica() {
+        return usoJugadaMagica;
+    }
+
     
     public int getVictorias(){
         return victorias;

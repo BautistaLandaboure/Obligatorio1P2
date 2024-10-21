@@ -17,9 +17,6 @@ public class ManejoJuego {
         Usuario jugadorActual = jugador1;
         boolean partidaActiva = true;
         int siguienteCuadrante = -1;
-        boolean magiaJugador1 = false;
-        boolean magiaJugador2 = false;
-
         boolean esContraComputadora = jugador2.getAlias().equals("Computadora");
 
         while (partidaActiva) {
@@ -28,7 +25,7 @@ public class ManejoJuego {
             } else {
                 siguienteCuadrante = turnoJugador(
                         jugadorActual, simboloActual, siguienteCuadrante,
-                        magiaJugador1, magiaJugador2, esContraComputadora
+                        esContraComputadora
                 );
             }
 
@@ -54,7 +51,7 @@ public class ManejoJuego {
 
     private static int turnoJugador(
             Usuario jugador, String simbolo, int siguienteCuadrante,
-            boolean magiaJugador1, boolean magiaJugador2, boolean esContraComputadora
+            boolean esContraComputadora
     ) {
         Scanner in = new Scanner(System.in);
         int cuadranteIndex;
@@ -64,7 +61,7 @@ public class ManejoJuego {
             && !tableroTateti.estaCuadranteCompleto(siguienteCuadrante)) {
         cuadranteIndex = siguienteCuadrante;
     } else {
-        cuadranteIndex = obtenerCuadranteValido(jugador, in, esContraComputadora, magiaJugador1, magiaJugador2);
+        cuadranteIndex = obtenerCuadranteValido(jugador, in, esContraComputadora);
         }
 
         if (cuadranteIndex == -2) {
@@ -74,7 +71,7 @@ public class ManejoJuego {
         tableroTateti.resaltarCuadrante(tableroTateti.obtenerLabelCuadrante(cuadranteIndex));
         tableroTateti.mostrarTablero("");
 
-        int nuevoCuadrante = registrarJugada(jugador, simbolo, cuadranteIndex, in, magiaJugador1, magiaJugador2, esContraComputadora);
+        int nuevoCuadrante = registrarJugada(jugador, simbolo, cuadranteIndex, in, esContraComputadora);
 
         if (nuevoCuadrante == -2) {
             return -2;
@@ -93,8 +90,7 @@ public class ManejoJuego {
     }
 
     private static int obtenerCuadranteValido(
-            Usuario jugador, Scanner in, boolean esContraComputadora,
-            boolean magiaJugador1, boolean magiaJugador2
+            Usuario jugador, Scanner in, boolean esContraComputadora
     ) {
         int cuadranteIndex = -1;
 
@@ -104,7 +100,7 @@ public class ManejoJuego {
             if (cuadranteElegido.equals("X")) {
                 return -2;  // terminar el juego
             }
-            if (cuadranteElegido.equals("M") && realizarJugadaMagica(jugador, magiaJugador1, magiaJugador2, esContraComputadora)) {
+            if (cuadranteElegido.equals("M") && realizarJugadaMagica(jugador, esContraComputadora)) {
                 return -1;  // permitir seleccionar cualquier cuadrante
         }
 
@@ -116,7 +112,7 @@ public class ManejoJuego {
 
     private static int registrarJugada(
             Usuario jugador, String simbolo, int cuadranteIndex,
-            Scanner in, boolean magiaJugador1, boolean magiaJugador2, boolean esContraComputadora
+            Scanner in, boolean esContraComputadora
     ) {
         boolean posicionValida = false;
         String posicion = "";
@@ -127,7 +123,7 @@ public class ManejoJuego {
             if (posicion.equals("X")) {
                 return -2;
             }
-            if (posicion.equals("M") && realizarJugadaMagica(jugador, magiaJugador1, magiaJugador2, esContraComputadora)) {
+            if (posicion.equals("M") && realizarJugadaMagica(jugador, esContraComputadora)) {
                 return -1;
         }
 
@@ -141,17 +137,13 @@ public class ManejoJuego {
     }
 
 
-    private static boolean realizarJugadaMagica(
-            Usuario jugador, boolean magiaJugador1, boolean magiaJugador2,
-            boolean esContraComputadora
-    ) {
+    private static boolean realizarJugadaMagica(Usuario jugador, boolean esContraComputadora) {
         if (esContraComputadora) {
             System.out.println("La jugada mágica no está disponible contra la computadora.");
             return false;
         }
 
-        if ((jugador.getAlias().equals("Jugador 1") && magiaJugador1)
-                || (jugador.getAlias().equals("Jugador 2") && magiaJugador2)) {
+        if (jugador.getUsoJugadaMagica()) {
             System.out.println("¡Ya usaste tu jugada mágica! Elige otra opción.");
             return false;
         }
@@ -166,13 +158,11 @@ public class ManejoJuego {
             return false;
         }
 
+        jugador.setUsoJugadaMagica(true);
+
         tableroTateti.limpiarMiniCuadrante(miniCuadrante);
         tableroTateti.mostrarTablero("");
 
-        if (jugador.getAlias().equals("Jugador 1"))
-            magiaJugador1 = true;
-        else
-            magiaJugador2 = true;
 
         return true;
     }
