@@ -135,10 +135,16 @@ public class TableroTateti {
         return new int[]{filaIndex, columnaIndex};
     }
 
-
     public int obtenerIndiceCuadrante(String label) {
-        return cuadranteLabels.indexOf(label);
+        int index = cuadranteLabels.indexOf(label);
+        if (index == -1) {
+            System.out.println("Error: Cuadrante '" + label + "' no encontrado.");
+        } else {
+            System.out.println("Cuadrante válido: " + label + " con índice " + index);
+        }
+        return index;
     }
+    
 
     public String obtenerLabelCuadrante(int index) {
         return (index >= 0 && index < cuadranteLabels.size()) ? cuadranteLabels.get(index) : "Invalid";
@@ -210,7 +216,10 @@ public class TableroTateti {
     }
 
     public boolean estaCuadranteGanado(int cuadranteIndex) {
-        // si el valor es distinto de 0, significa que el cuadrante fue ganado
+        if (cuadranteIndex < 0 || cuadranteIndex >= miniCuadrantesGanados.length) {
+            System.out.println("Error: Índice de cuadrante fuera de rango: " + cuadranteIndex);
+            return false;
+        }
         return miniCuadrantesGanados[cuadranteIndex] != 0;
     }
 
@@ -251,6 +260,11 @@ public class TableroTateti {
     }
 
     public boolean estaCuadranteCompleto(int cuadranteIndex) {
+        if (cuadranteIndex < 0 || cuadranteIndex >= miniCuadrantesGanados.length) {
+            System.out.println("Error: Índice inválido para cuadrante: " + cuadranteIndex);
+            return false; // Evita continuar con un índice inválido.
+        }
+
         int filaInicio = (cuadranteIndex / 3) * 6 + 1;
         int colInicio = (cuadranteIndex % 3) * 6 + 1;
 
@@ -266,6 +280,7 @@ public class TableroTateti {
         }
         return true;
     }
+
 
     public void limpiarResaltado(String cuadrante) {
         int filaInicio = (cuadrante.charAt(0) - 'A') * 6;
@@ -315,14 +330,41 @@ public class TableroTateti {
     }
 
 
-    public void limpiarMiniCuadrante(String cuadrante) {
-        int filaBase = (cuadrante.charAt(0) - 'A') * 6 + 1;
-        int colBase = (cuadrante.charAt(1) - '1') * 6 + 1;
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
-                tablero[filaBase + i][colBase + j] = " ";
+    public void limpiarJugadasCuadrante(int cuadranteIndex, String posicionPreservada) {
+        if (cuadranteIndex < 0 || cuadranteIndex >= cuadranteLabels.size()) {
+            System.out.println("Error: Índice de cuadrante inválido. No se puede limpiar.");
+            return;
+        }
+    
+        int filaBase = (cuadranteIndex / 3) * 6 + 1;
+        int colBase = (cuadranteIndex % 3) * 6 + 1;
+    
+        // Convertir la posición preservada a coordenadas dentro del cuadrante
+        int[] coordenadasPreservada = obtenerCoordenadasPosicion(posicionPreservada);
+    
+        if (coordenadasPreservada == null) {
+            System.out.println("Error: Posición preservada inválida.");
+            return;
+        }
+    
+        int filaPreservada = filaBase + coordenadasPreservada[0] * 2;
+        int colPreservada = colBase + coordenadasPreservada[1] * 2;
+    
+        System.out.println("Limpiando jugadas del cuadrante: " + obtenerLabelCuadrante(cuadranteIndex));
+    
+        // Iterar sobre cada posición en el mini cuadrante y limpiarla excepto la preservada
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                int fila = filaBase + i * 2;
+                int columna = colBase + j * 2;
+    
+                if (fila != filaPreservada || columna != colPreservada) {
+                    tablero[fila][columna] = " ";  // Limpiar posición
+                }
             }
         }
-        System.out.println("Mini cuadrante " + cuadrante + " ha sido limpiado.");
+    
+        // Mostrar el tablero actualizado
+        mostrarTablero("");
     }
 }
