@@ -202,7 +202,17 @@ public class Obligatorio1 {
 
         System.out.println("\nRanking de Jugadores:");
         for (Usuario usuario : usuarios) {
-            System.out.println(usuario.getAlias() + " | Victorias: " + usuario.getVictorias());
+            String barrasVictorias = generarBarrasVictorias(usuario.getVictorias());
+            System.out.println(usuario.getAlias() + " | Victorias: " + barrasVictorias);
         }
     }
+
+    private static String generarBarrasVictorias(int victorias) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < victorias; i++) {
+            builder.append("#");
+        }
+        return builder.toString();
+    }
+
 }

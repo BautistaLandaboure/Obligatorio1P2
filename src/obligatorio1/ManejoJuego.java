@@ -51,8 +51,8 @@ public class ManejoJuego {
 
     private static int turnoJugador(
             Usuario jugador, String simbolo, int siguienteCuadrante,
-            boolean esContraComputadora
-    ) {
+            boolean esContraComputadora) {
+
         Scanner in = new Scanner(System.in);
         int cuadranteIndex;
 
@@ -65,7 +65,7 @@ public class ManejoJuego {
         }
 
         if (cuadranteIndex == -2) {
-            return -2;
+            return -2; // Termina el juego.
         }
 
         tableroTateti.resaltarCuadrante(tableroTateti.obtenerLabelCuadrante(cuadranteIndex));
@@ -74,7 +74,7 @@ public class ManejoJuego {
         int nuevoCuadrante = registrarJugada(jugador, simbolo, cuadranteIndex, in, esContraComputadora);
 
         if (nuevoCuadrante == -2) {
-            return -2;
+            return -2; // Termina el juego.
         }
 
         if (tableroTateti.estaCuadranteGanado(nuevoCuadrante) || tableroTateti.estaCuadranteCompleto(nuevoCuadrante)) {
@@ -83,11 +83,12 @@ public class ManejoJuego {
             tableroTateti.mostrarTablero("");
 
             System.out.println("El cuadrante " + cuadrante + " está ganado o completo.");
-            return -1;
+            return -1; // Permitir seleccionar cualquier cuadrante.
         }
 
-        return nuevoCuadrante;
+        return nuevoCuadrante; // Devuelve el cuadrante para el siguiente turno.
     }
+
 
     private static int obtenerCuadranteValido(
             Usuario jugador, Scanner in, boolean esContraComputadora
@@ -112,8 +113,8 @@ public class ManejoJuego {
 
     private static int registrarJugada(
             Usuario jugador, String simbolo, int cuadranteIndex,
-            Scanner in, boolean esContraComputadora
-    ) {
+            Scanner in, boolean esContraComputadora) {
+
         boolean posicionValida = false;
         String posicion = "";
 
@@ -121,11 +122,17 @@ public class ManejoJuego {
             posicion = obtenerPosicion(jugador, tableroTateti.obtenerLabelCuadrante(cuadranteIndex), in);
 
             if (posicion.equals("X")) {
-                return -2;
+                return -2; // Termina el juego.
             }
-            if (posicion.equals("M") && realizarJugadaMagica(jugador, esContraComputadora, cuadranteIndex)) {
-                return -1;
 
+            if (posicion.equals("M")) {
+                int siguienteCuadrante = realizarJugadaMagica(jugador, simbolo, esContraComputadora, cuadranteIndex);
+                if (siguienteCuadrante >= 0) {
+                    return siguienteCuadrante; // Continua en el cuadrante correspondiente.
+                } else {
+                    System.out.println("Error al realizar la jugada mágica.");
+                    continue; // Vuelve a solicitar la jugada si hubo error.
+                }
         }
 
         if (tableroTateti.jugarEnCuadrante(cuadranteIndex, posicion, simbolo)) {
@@ -134,19 +141,19 @@ public class ManejoJuego {
             System.out.println("Posición no válida. Intenta nuevamente.");
         }
         }
+
         return tableroTateti.obtenerIndiceCuadrante(posicion);
     }
 
-
-    private static boolean realizarJugadaMagica(Usuario jugador, boolean esContraComputadora, int cuadranteIndex) {
+    private static int realizarJugadaMagica(Usuario jugador, String simbolo, boolean esContraComputadora, int cuadranteIndex) {
         if (esContraComputadora) {
             System.out.println("La jugada mágica no está disponible contra la computadora.");
-            return false;
+            return -1;
         }
 
         if (jugador.getUsoJugadaMagica()) {
             System.out.println("¡Ya usaste tu jugada mágica! Elige otra opción.");
-            return false;
+            return -1;
         }
 
         Scanner in = new Scanner(System.in);
@@ -154,14 +161,23 @@ public class ManejoJuego {
                 + "! Selecciona la posición que quieres conservar en el cuadrante (A1, A2, ..., C3): ");
         String posicionPreservada = in.nextLine().toUpperCase();
 
-        if (!tableroTateti.jugarEnCuadrante(cuadranteIndex, posicionPreservada, cambiarSimbolo(" "))) {
+        // Intenta jugar en la posición preservada
+        if (!tableroTateti.jugarEnCuadrante(cuadranteIndex, posicionPreservada, simbolo)) {
             System.out.println("Error: La posición seleccionada no es válida.");
-            return false;
+            return -1;
         }
 
+        // Marca que el jugador ha usado su jugada mágica
         jugador.setUsoJugadaMagica(true);
+
+        // Limpia las demás posiciones del cuadrante excepto la seleccionada
         tableroTateti.limpiarJugadasCuadrante(cuadranteIndex, posicionPreservada);
-        return true;
+
+        // Mostrar el tablero actualizado
+        tableroTateti.mostrarTablero("");
+
+        // Devolver el índice del siguiente cuadrante según la posición seleccionada
+        return tableroTateti.obtenerIndiceCuadrante(posicionPreservada);
     }
 
     private static int validarCuadrante(String cuadranteElegido) {
@@ -191,7 +207,7 @@ public class ManejoJuego {
     }
 
     private static String obtenerPosicion(Usuario jugador, String cuadranteElegido, Scanner in) {
-        System.out.print("Elige una posición en " + cuadranteElegido + " (A1, A2, ..., C3), 'M' para usar magia o 'X' para salir: ");
+        System.out.print(jugador.getAlias() + " elige una posición en " + cuadranteElegido + " (A1, A2, ..., C3), 'M' para usar magia o 'X' para salir: ");
         return in.nextLine().toUpperCase();
     }
 
