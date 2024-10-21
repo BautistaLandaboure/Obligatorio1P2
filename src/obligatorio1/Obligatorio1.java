@@ -2,6 +2,9 @@ package obligatorio1;
 
 import java.util.*;
 
+// @author Valentina Giusti - 199747
+// @author Bautista Landaboure 
+
 public class Obligatorio1 {
 
     private static final ManejoRegistro manejoRegistro = new ManejoRegistro();
@@ -11,7 +14,7 @@ public class Obligatorio1 {
         int opcion = 0;
         Scanner in = new Scanner(System.in);
 
-        // mostrarAnimacionBienvenida();
+        mostrarAnimacionBienvenida();
 
         while (opcion != 5) {
             mostrarMenu();
@@ -50,7 +53,7 @@ public class Obligatorio1 {
         for (int i = 0; i < 10; i++) {
             System.out.print(".");
             try {
-                Thread.sleep(300);  // simular la carga con un retardo
+                Thread.sleep(100);  // simular la carga con un retardo
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -78,7 +81,7 @@ public class Obligatorio1 {
             return in.nextInt();
         } catch (InputMismatchException e) {
             System.out.println("Por favor, ingrese un número válido.");
-            in.nextLine(); // Limpiar buffer
+            in.nextLine();
             return -1;
         }
     }
@@ -92,7 +95,6 @@ public class Obligatorio1 {
         int edad = 0;
         boolean edadValida = false;
 
-        // validamos la edad como un número válido
         while (!edadValida) {
             System.out.print("Ingrese edad: ");
             String entradaEdad = in.nextLine().trim();
@@ -110,7 +112,7 @@ public class Obligatorio1 {
         }
 
         String alias;
-        //  validamos el alias como no vacío y único
+
         do {
             System.out.print("Ingrese alias: ");
             alias = in.nextLine().trim();
@@ -140,7 +142,7 @@ public class Obligatorio1 {
         Usuario jugador1 = seleccionarJugador(in, "Seleccione el jugador 1: ");
         Usuario jugador2;
 
-        // asegurarse de que el jugador 2 no sea el mismo que el jugador 1
+
         do {
             jugador2 = seleccionarJugador(in, "Seleccione el jugador 2 (diferente al jugador 1): ");
             if (jugador2.equals(jugador1)) {

@@ -2,6 +2,9 @@ package obligatorio1;
 
 import java.util.ArrayList;
 
+// @author Valentina Giusti - 199747
+// @author Bautista Landaboure 
+
 public class ManejoRegistro {
 
     private ArrayList<Usuario> usuarios;

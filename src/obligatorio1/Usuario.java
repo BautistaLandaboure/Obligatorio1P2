@@ -1,5 +1,8 @@
 package obligatorio1;
 
+// @author Valentina Giusti - 199747
+// @author Bautista Landaboure 
+
 public class Usuario {
 
     private String nombre;
@@ -8,7 +11,7 @@ public class Usuario {
     private int victorias;
     private boolean usoJugadaMagica;
 
-// Constructor para crear una instancia de usuario
+
     public Usuario(String nombre, int edad, String alias) {
         this.nombre = nombre;
         this.edad = edad;
@@ -17,7 +20,6 @@ public class Usuario {
         this.usoJugadaMagica = false;
     }
 
-// Método para mostrar la información del usuario
     @Override
     public String toString() {
         return "Nombre: " + nombre + ", Edad: " + edad + ", Alias: " + alias;
@@ -55,11 +57,10 @@ public class Usuario {
         return usoJugadaMagica;
     }
 
-    
     public int getVictorias(){
         return victorias;
     }
-    
+
      public void incrementarVictorias() {
         this.victorias++;
     }

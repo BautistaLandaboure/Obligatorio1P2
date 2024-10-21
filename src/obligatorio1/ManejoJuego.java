@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
+// @author Valentina Giusti - 199747
+// @author Bautista Landaboure 
+
 public class ManejoJuego {
 
     private static final TableroTateti tableroTateti = new TableroTateti();
@@ -74,7 +77,7 @@ public class ManejoJuego {
         int nuevoCuadrante = registrarJugada(jugador, simbolo, cuadranteIndex, in, esContraComputadora);
 
         if (nuevoCuadrante == -2) {
-            return -2; // Termina el juego.
+            return -2; // termina el juego
         }
 
         if (tableroTateti.estaCuadranteGanado(nuevoCuadrante) || tableroTateti.estaCuadranteCompleto(nuevoCuadrante)) {
@@ -83,10 +86,10 @@ public class ManejoJuego {
             tableroTateti.mostrarTablero("");
 
             System.out.println("El cuadrante " + cuadrante + " está ganado o completo.");
-            return -1; // Permitir seleccionar cualquier cuadrante.
+            return -1; // permitir seleccionar cualquier cuadrante
         }
 
-        return nuevoCuadrante; // Devuelve el cuadrante para el siguiente turno.
+        return nuevoCuadrante; // devuelve el cuadrante para el siguiente turno.
     }
 
 
@@ -101,10 +104,6 @@ public class ManejoJuego {
             if (cuadranteElegido.equals("X")) {
                 return -2;  // terminar el juego
             }
-            //     if (cuadranteElegido.equals("M") && realizarJugadaMagica(jugador, esContraComputadora, cuadranteIndex)) {
-            //         return -1;  // permitir seleccionar cualquier cuadrante,
-            // }
-
             cuadranteIndex = validarCuadrante(cuadranteElegido);
         }
 
@@ -128,10 +127,10 @@ public class ManejoJuego {
             if (posicion.equals("M")) {
                 int siguienteCuadrante = realizarJugadaMagica(jugador, simbolo, esContraComputadora, cuadranteIndex);
                 if (siguienteCuadrante >= 0) {
-                    return siguienteCuadrante; // Continua en el cuadrante correspondiente.
+                    return siguienteCuadrante;
                 } else {
                     System.out.println("Error al realizar la jugada mágica.");
-                    continue; // Vuelve a solicitar la jugada si hubo error.
+                    continue; // vuelve a solicitar la jugada si hubo error
                 }
         }
 
@@ -167,16 +166,10 @@ public class ManejoJuego {
             return -1;
         }
 
-        // Marca que el jugador ha usado su jugada mágica
         jugador.setUsoJugadaMagica(true);
-
-        // Limpia las demás posiciones del cuadrante excepto la seleccionada
         tableroTateti.limpiarJugadasCuadrante(cuadranteIndex, posicionPreservada);
-
-        // Mostrar el tablero actualizado
         tableroTateti.mostrarTablero("");
 
-        // Devolver el índice del siguiente cuadrante según la posición seleccionada
         return tableroTateti.obtenerIndiceCuadrante(posicionPreservada);
     }
 

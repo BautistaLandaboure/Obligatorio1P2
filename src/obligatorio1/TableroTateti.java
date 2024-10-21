@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+// @author Valentina Giusti - 199747
+// @author Bautista Landaboure 
+
 public class TableroTateti {
 
     private final String[][] tablero;
@@ -144,7 +147,6 @@ public class TableroTateti {
         }
         return index;
     }
-    
 
     public String obtenerLabelCuadrante(int index) {
         return (index >= 0 && index < cuadranteLabels.size()) ? cuadranteLabels.get(index) : "Invalid";
@@ -335,36 +337,35 @@ public class TableroTateti {
             System.out.println("Error: Índice de cuadrante inválido. No se puede limpiar.");
             return;
         }
-    
+
         int filaBase = (cuadranteIndex / 3) * 6 + 1;
         int colBase = (cuadranteIndex % 3) * 6 + 1;
-    
-        // Convertir la posición preservada a coordenadas dentro del cuadrante
+
+        // convertir la posición preservada a coordenadas dentro del cuadrante
         int[] coordenadasPreservada = obtenerCoordenadasPosicion(posicionPreservada);
-    
+
         if (coordenadasPreservada == null) {
             System.out.println("Error: Posición preservada inválida.");
             return;
         }
-    
+
         int filaPreservada = filaBase + coordenadasPreservada[0] * 2;
         int colPreservada = colBase + coordenadasPreservada[1] * 2;
-    
+
         System.out.println("Limpiando jugadas del cuadrante: " + obtenerLabelCuadrante(cuadranteIndex));
-    
-        // Iterar sobre cada posición en el mini cuadrante y limpiarla excepto la preservada
+
+        // iterar sobre cada posición en el mini cuadrante y limpiarla excepto la preservada
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 int fila = filaBase + i * 2;
                 int columna = colBase + j * 2;
-    
+
                 if (fila != filaPreservada || columna != colPreservada) {
                     tablero[fila][columna] = " ";  // Limpiar posición
                 }
             }
         }
-    
-        // Mostrar el tablero actualizado
+
         mostrarTablero("");
     }
 }
