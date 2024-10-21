@@ -5,7 +5,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 // @author Valentina Giusti - 199747
-// @author Bautista Landaboure 
+// @author Bautista Landaboure - 316326
 
 public class ManejoJuego {
 
