@@ -11,11 +11,6 @@ public class ManejoRegistro {
 
     public ManejoRegistro() {
         usuarios = new ArrayList<>();
-
-        Usuario jugador1 = new Usuario("Jugador1", 25, "XMaster");
-        Usuario jugador2 = new Usuario("Jugador2", 30, "OMaster");
-        usuarios.add(jugador1);
-        usuarios.add(jugador2);
     }
 
     public boolean registrarUsuario(Usuario nuevoUsuario) {
