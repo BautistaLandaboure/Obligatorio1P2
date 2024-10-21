@@ -33,9 +33,12 @@ public class ManejoJuego {
             }
 
             if (siguienteCuadrante == -2) {
-                System.out.println(jugadorActual.getAlias() + " terminó la partida.");
-                partidaActiva = false;
-            }
+        System.out.println(jugadorActual.getAlias() + " terminó la partida.");
+        Usuario jugadorRival = jugadorActual == jugador1 ? jugador2 : jugador1;
+        jugadorRival.incrementarVictorias();
+        System.out.println(jugadorRival.getAlias() + " gana por rendición.");
+        partidaActiva = false;
+}
 
             if (tableroTateti.verificarJuegoGanado(simboloActual)) {
                 System.out.println("¡" + jugadorActual.getAlias() + " ha ganado!");
