@@ -3,7 +3,7 @@ package obligatorio1;
 import java.util.ArrayList;
 
 // @author Valentina Giusti - 199747
-// @author Bautista Landaboure 
+// @author Bautista Landaboure - 316326
 
 public class ManejoRegistro {
 
